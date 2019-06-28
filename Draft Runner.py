@@ -6,11 +6,11 @@ import math
 
 # SETTINGS
 
-round_timing = [2, 2, 2]
-start_time = [8, 0]
-save_dir = r"E:\_Python Projects\Draft Runner Data"
-output_mode = "CD"
-random_order = True
+ROUND_TIMING = [2, 2, 2]
+START_TIME = [8, 0]
+SAVE_DIR = r"E:\_Python Projects\Draft Runner Data"
+OUTPUT_MODE = "CD"
+RANDOM_ORDER = True
 
 
 # TODO Add a rookie random function
@@ -67,29 +67,18 @@ def time_math(hour, minute, additions, margin):
 
 def setup_draft(start_hour, start_minute, players):
     number_of_teams = len(players)
-    r2_stats = time_math(start_hour, start_minute, number_of_teams - 1, round_timing[0])
-    r3_stats = time_math(r2_stats[1], r2_stats[2], number_of_teams + 1, round_timing[1])
+    r2_stats = time_math(start_hour, start_minute, number_of_teams - 1, ROUND_TIMING[0])
+    r3_stats = time_math(r2_stats[1], r2_stats[2], number_of_teams + 1, ROUND_TIMING[1])
     table = []
 
     i = 0
     for player in players:
-        team_setup = [player, time_math(start_hour, start_minute, i, round_timing[0])[0],
-                      time_math(r2_stats[1], r2_stats[2], (number_of_teams - i), round_timing[1])[0],
-                      time_math(r3_stats[1], r3_stats[2], i, round_timing[2])[0], "*Live Picking*"]
+        team_setup = [player, time_math(start_hour, start_minute, i, ROUND_TIMING[0])[0],
+                      time_math(r2_stats[1], r2_stats[2], (number_of_teams - i), ROUND_TIMING[1])[0],
+                      time_math(r3_stats[1], r3_stats[2], i, ROUND_TIMING[2])[0], "*Live Picking*"]
         table.append(team_setup)
         i += 1
     return table
-
-
-def loader(prompt):
-    loading = True
-    while loading is True:
-        correct_prompt = input(prompt)
-        if correct_prompt.lower() == "y":
-            print("Moving on...")
-            loading = False
-        else:
-            print("Please try again!")
 
 
 def current_slot(df, number_of_players):
@@ -147,7 +136,7 @@ while start_draft is True:
     if "'" in event_name:
         print("The character ' is not permitted in event names")
     else:
-        if os.path.isdir("{}\{}".format(save_dir, event_name)):
+        if os.path.isdir("{}\{}".format(SAVE_DIR, event_name)):
             correct_prompt = input("Looks like this event exists already! Would you like to load the data? [Y/N]: ")
             if correct_prompt.lower() == "y":
                 start_draft = False
@@ -155,10 +144,10 @@ while start_draft is True:
             else:
                 print("Please try again!")
         else:
-            os.mkdir("{}\{}".format(save_dir, event_name))
+            os.mkdir("{}\{}".format(SAVE_DIR, event_name))
             start_draft = False
             loading = False
-        base_path = "{}\{}".format(save_dir, event_name)
+        base_path = "{}\{}".format(SAVE_DIR, event_name)
 
 players_input = "{}\Players.txt".format(base_path)
 teams_input = "{}\Teams.txt".format(base_path)
@@ -196,7 +185,7 @@ else:
     f = open(teams_input, "r")
     teams = f.readlines()
     teams_clean = [x.replace('\n', '') for x in teams]
-    if random_order:  # If random order setting is activated.
+    if RANDOM_ORDER:  # If random order setting is activated.
         random_teams = [x.replace('\n', '') for x in teams]
         random.shuffle(random_teams)
     with open(teams_data_location, 'w') as outfile:
@@ -204,12 +193,12 @@ else:
     with open(random_list_location, 'w') as outfile:
         json.dump(random_teams, outfile)
 
-tier_ratio = math.ceil(len(players_clean) / (len(teams_clean) / len(round_timing)))
+tier_ratio = math.ceil(len(players_clean) / (len(teams_clean) / len(ROUND_TIMING)))
 base_team_list = teams_clean.copy()
 available_team_list = []
 for team in base_team_list:
     available_team_list.append([team, tier_ratio])
-draft_info = setup_draft(start_time[0], start_time[1], players_clean)
+draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean)
 headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*"]
 draft_output = pd.DataFrame(draft_info, columns=headers)
 
@@ -229,7 +218,7 @@ for player in players_clean:
 teams_output = available_teams(available_team_list, tier_ratio)
 total_output = draft_output.append(teams_output, ignore_index=True)
 
-if output_mode == "CD":
+if OUTPUT_MODE == "CD":
     total_output.to_clipboard(excel=True, index=False)
     print(draft_output)
 
@@ -414,7 +403,7 @@ while True:
             teams_output = available_teams(available_team_list, tier_ratio)
             total_output = draft_output.append(teams_output, ignore_index=True)
 
-            if output_mode == "CD":
+            if OUTPUT_MODE == "CD":
                 total_output.to_clipboard(excel=True, index=False)
 
             slot_index = current_slot(total_output, number_of_players)
