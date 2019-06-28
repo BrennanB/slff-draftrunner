@@ -15,3 +15,37 @@ Create a folder for where you would like the draft data to be saved. Copy the lo
 Right click "Draftrunner.py" and edit with IDLE or your preferred text editor. Edit the variable "SAVE_DIR" to your new location and save.
 
 You are now able to run the draft runner.
+
+## Updating
+
+Re-download the ZIP file from Github, and update your save directory.
+
+## Running a draft
+
+### Commands
+
+Shortforms for each command will be denoted by (). [] denote values for the inputs.
+
+#### pick (p) [team]
+
+Selects a team for the active slot.
+
+#### list (l) [player name]
+
+Is case sensitive. Opens a text file for lists to be inputted.
+
+#### random (p)
+
+Randoms current slot
+
+#### swap (s) [team out] [team in]
+
+Swaps the two teams, will ask for clarification if multiple instances of the subbed out team exists. To clarify when prompted input the player name that is wanted.
+
+#### print
+
+Outputs current draft status.
+
+#### exit/end/quit
+
+Closes the draft runner.
