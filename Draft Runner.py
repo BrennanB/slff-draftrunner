@@ -178,7 +178,8 @@ else:
     players = f.readlines()
     players_clean = [x.replace('\n', '') for x in players]
     players_clean = list(filter(None, players_clean))
-    random.shuffle(players_clean)
+    if RANDOM_ORDER:  # If random order setting is activated.
+        random.shuffle(players_clean)
     with open(players_data_location, 'w') as outfile:
         json.dump(players_clean, outfile)
 
@@ -189,9 +190,9 @@ else:
     f = open(teams_input, "r")
     teams = f.readlines()
     teams_clean = [x.replace('\n', '') for x in teams]
-    if RANDOM_ORDER:  # If random order setting is activated.
-        random_teams = [x.replace('\n', '') for x in teams]
-        random.shuffle(random_teams)
+
+    random_teams = [x.replace('\n', '') for x in teams]
+    random.shuffle(random_teams)
     with open(teams_data_location, 'w') as outfile:
         json.dump(teams_clean, outfile)
     with open(random_list_location, 'w') as outfile:
