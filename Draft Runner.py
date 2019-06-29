@@ -18,18 +18,13 @@ RANDOM_ORDER = True
 # TODO Tier support
 
 def available_teams(available_teams, tier_ratio):
-    # TODO Support better team sorting.
-
-    teams = []
-    for team in available_teams:
-        if team[1] != 0:
-            if tier_ratio > 1:
-                teams.append("{} ({})".format(team[0], team[1]))
-            else:
-                teams.append(team[0])
+    if tier_ratio > 1:  # Multiple teams are required
+        teams = ["{} ({})".format(team[0], team[1]) for team in available_team_list]
+    else:   # Single teams only
+        teams = [team[0] for team in available_team_list]
 
     convert = lambda text: int(text) if text.isdigit() else text
-    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    alphanum_key = lambda key: [convert(c) for c in re.split("([0-9]+)", key)]
     teams.sort(key=alphanum_key)
     team_headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*"]
     i = 0
@@ -55,9 +50,9 @@ def available_teams(available_teams, tier_ratio):
 
 def time_math(hour, minute, additions, margin):
     if margin == 0:
-        pass
+        return None
     else:
-        for j in range(0, additions):
+        for i in range(0, additions):
             minute += margin
             if minute >= 60:
                 hour += 1
@@ -66,7 +61,7 @@ def time_math(hour, minute, additions, margin):
             string_minute = "0" + str(minute)
         else:
             string_minute = minute
-    return (str(hour) + ":" + str(string_minute)), hour, minute
+    return "{}:{}".format(hour, string_minute), hour, minute
 
 
 def setup_draft(start_hour, start_minute, players):
@@ -74,7 +69,6 @@ def setup_draft(start_hour, start_minute, players):
     r2_stats = time_math(start_hour, start_minute, number_of_teams - 1, ROUND_TIMING[0])
     r3_stats = time_math(r2_stats[1], r2_stats[2], number_of_teams + 1, ROUND_TIMING[1])
     table = []
-
     i = 0
     for player in players:
         team_setup = [player, time_math(start_hour, start_minute, i, ROUND_TIMING[0])[0],
