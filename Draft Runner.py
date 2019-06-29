@@ -3,10 +3,11 @@ import os
 import json
 import pandas as pd
 import math
+import re
 
 # SETTINGS
 
-ROUND_TIMING = [2, 2, 2]
+ROUND_TIMING = [2, 1, 1]
 START_TIME = [8, 0]
 SAVE_DIR = r"E:\_Python Projects\Draft Runner Data"
 OUTPUT_MODE = "CD"
@@ -26,7 +27,10 @@ def available_teams(available_teams, tier_ratio):
                 teams.append("{} ({})".format(team[0], team[1]))
             else:
                 teams.append(team[0])
-    teams.sort()
+
+    convert = lambda text: int(text) if text.isdigit() else text
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    teams.sort(key=alphanum_key)
     team_headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*"]
     i = 0
     team_lists = [["", "", "", "", ""], ["**Available Teams**", "", "", "", ""]]
