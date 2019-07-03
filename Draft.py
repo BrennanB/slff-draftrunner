@@ -18,12 +18,12 @@ def available_teams(available_team_list, tier_ratio):
     convert = lambda text: int(text) if text.isdigit() else text
     alphanum_key = lambda key: [convert(c) for c in re.split("([0-9]+)", key)]
     teams.sort(key=alphanum_key)
-    team_headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*"]
+    team_headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "+", "-"]
     i = 0
-    team_lists = [["", "", "", "", ""], ["**Available Teams**", "", "", "", ""]]
+    team_lists = [["", "", "", "", "", "", ""], ["**Available Teams**", "", "", "", "", "", ""]]
     mini_team_list = []
     for team in teams:
-        if i == 4:
+        if i == 6:
             mini_team_list.append(team)
             team_lists.append(mini_team_list)
             mini_team_list = []
@@ -32,7 +32,7 @@ def available_teams(available_team_list, tier_ratio):
             mini_team_list.append(team)
             i += 1
     if len(mini_team_list) > 0:
-        for number in range(len(mini_team_list), 5):
+        for number in range(len(mini_team_list), 7):
             mini_team_list.append("-")
 
         team_lists.append(mini_team_list)
@@ -65,7 +65,7 @@ def setup_draft(start_hour, start_minute, players, ROUND_TIMING):
     for player in players:
         team_setup = [player, time_math(start_hour, start_minute, i, ROUND_TIMING[0])[0],
                       time_math(r2_stats[1], r2_stats[2], (number_of_teams - i), ROUND_TIMING[1])[0],
-                      time_math(r3_stats[1], r3_stats[2], i, ROUND_TIMING[2])[0], "*Live Picking*"]
+                      time_math(r3_stats[1], r3_stats[2], i, ROUND_TIMING[2])[0], "*Live Picking*", "", ""]
         table.append(team_setup)
         i += 1
     return table
@@ -122,7 +122,7 @@ def get_team_info(team, available_team_list, mode, teams_clean):
 def run_draft(START_TIME, TIERS, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean, available_team_list, random_teams, teams_clean):
 
     draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean, ROUND_TIMING)
-    headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*"]
+    headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "+", "-"]
     draft_output = pd.DataFrame(draft_info, columns=headers)
 
     # Setting required variables
