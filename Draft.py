@@ -7,10 +7,16 @@ import re
 
 
 def available_teams(available_team_list, tier_ratio):
+
+    displayed_teams = []
+    for team in available_team_list:
+        if team[1] != 0:
+            displayed_teams.append(team)
+
     if tier_ratio > 1:  # Multiple teams are required
-        teams = ["{} ({})".format(team[0], team[1]) for team in available_team_list]
+        teams = ["{} ({})".format(team[0], team[1]) for team in displayed_teams]
     else:   # Single teams only
-        teams = [team[0] for team in available_team_list]
+        teams = [team[0] for team in displayed_teams]
 
     convert = lambda text: int(text) if text.isdigit() else text
     alphanum_key = lambda key: [convert(c) for c in re.split("([0-9]+)", key)]
