@@ -1,9 +1,7 @@
 import random
 import os
 import json
-import pandas as pd
 import math
-import re
 import Draft
 
 # SETTINGS
@@ -14,7 +12,6 @@ SAVE_DIR = r"C:\Users\brenn\Desktop\Runner Data"
 OUTPUT_MODE = "CD"
 RANDOM_ORDER = True
 TIERS = True
-
 
 # TODO Add a rookie random function
 # TODO Tier support
@@ -88,7 +85,17 @@ else:
 tier_ratio = math.ceil(len(players_clean) / (len(teams_clean) / len(ROUND_TIMING)))
 base_team_list = teams_clean.copy()
 available_team_list = []
-for team in base_team_list:
-    available_team_list.append([team, tier_ratio])
+mini_available_team_list = []
+if TIERS:
+    for team in base_team_list:
+        mini_available_team_list.append(team)
+    for i in range(0, tier_ratio):
+        available_team_list.append(mini_available_team_list)
+else:
+    for team in base_team_list:
+        available_team_list.append([team, tier_ratio])
 
-Draft.run_draft(START_TIME, base_path,tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean, available_team_list, random_teams, teams_clean)
+print(available_team_list)
+
+Draft.run_draft(START_TIME, TIERS, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
+                available_team_list, random_teams, teams_clean)
