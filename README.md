@@ -22,6 +22,8 @@ Re-download the ZIP file from Github, and update your save directory.
 
 ## Running a draft
 
+Run "Draft Runner.py" file
+
 ### Commands
 
 Shortforms for each command will be denoted by (). [] denote values for the inputs.
