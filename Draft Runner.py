@@ -11,7 +11,7 @@ START_TIME = [8, 0]
 SAVE_DIR = r"C:\Users\brenn\Desktop\Runner Data"
 OUTPUT_MODE = "CD"
 RANDOM_ORDER = True
-TIERS = True
+TIERS = False
 
 # TODO Add a rookie random function
 # TODO Tier support
@@ -82,7 +82,7 @@ else:
     with open(random_list_location, 'w') as outfile:
         json.dump(random_teams, outfile)
 
-tier_ratio = math.ceil(len(players_clean) / (len(teams_clean) / len(ROUND_TIMING)))
+tier_ratio = math.ceil((len(players_clean) + 1) / (len(teams_clean) / len(ROUND_TIMING)))
 base_team_list = teams_clean.copy()
 available_team_list = []
 mini_available_team_list = []

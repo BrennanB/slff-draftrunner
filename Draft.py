@@ -121,13 +121,11 @@ def get_team_info(team, available_team_list, mode, teams_clean):
 
 def run_draft(START_TIME, TIERS, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean, available_team_list, random_teams, teams_clean):
 
+    number_of_players = len(players_clean)
+
     draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean, ROUND_TIMING)
     headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "+", "-"]
     draft_output = pd.DataFrame(draft_info, columns=headers)
-
-    # Setting required variables
-
-    number_of_players = len(players_clean)
 
     # Checked for Saved Lists
     for player in players_clean:
