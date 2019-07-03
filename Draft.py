@@ -152,6 +152,19 @@ def run_draft(START_TIME, TIERS, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORD
         # Recieve input
         command = input("Enter your command: ")
         commands = command.split(" ")
+        if TIERS:
+            tier_value = commands[0]
+            if tier_value[:1].lower() == 't':
+                if len(tier_value[1:]) > 0:
+                    try:
+                        if int(tier_value[1:]) <= tier_ratio:
+                            print("it's a tier")
+                    except ValueError:
+                        print("'{}' is not a number, please use a number for the tier value".format(tier_value[1:]))
+                else:
+                    print("Please enter a tier number.")
+            else:
+                print("Please specify a tier as 't(tier number)' for example t2 for tier 2")
         failed = False
         if slot_index is None:
             print("Done Draft")
