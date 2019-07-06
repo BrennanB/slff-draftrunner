@@ -135,30 +135,40 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean[past_i:i], ROUND_TIMING)
             headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
             d[tier_index] = pd.DataFrame(draft_info, columns=headers)
+            # Checked for Saved Lists
+            for player in players_clean[past_i:i]:
+                player_list_location = "{}\{}.txt".format(base_path, player)
+                if os.path.isfile(player_list_location):
+                    for index in range(0, len(tiered_players_clean[tier_index-1])):
+                        draft_output = d[tier_index]
+                        if player == draft_output.at[index, "Player"]:
+                            draft_output.at[index, "*Status*"] = "*List*"
+                            d.update({tier_index: draft_output})
             tier_index += 1
         print(d)
-    else:
+    else:   # Tiers aren't being run
         draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean, ROUND_TIMING)
         headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
         draft_output = pd.DataFrame(draft_info, columns=headers)
 
-    # Checked for Saved Lists
-    for player in players_clean:
-        player_list_location = "{}\{}.txt".format(base_path, player)
-        if os.path.isfile(player_list_location):
-            for index in range(0, number_of_players):
-                if player == draft_output.at[index, "Player"]:
-                    draft_output.at[index, "*Status*"] = "*List*"
+        # Checked for Saved Lists
+        for player in players_clean:
+            player_list_location = "{}\{}.txt".format(base_path, player)
+            if os.path.isfile(player_list_location):
+                for index in range(0, number_of_players):
+                    if player == draft_output.at[index, "Player"]:
+                        draft_output.at[index, "*Status*"] = "*List*"
 
+    print("Success!")
     teams_output = available_teams(available_team_list, tier_ratio)
     available_team_list = teams_output[1]
     total_output = draft_output.append(teams_output[0], ignore_index=True)
 
+    slot_index = current_slot(total_output, number_of_players)
+
     if OUTPUT_MODE == "CD":
         total_output.to_clipboard(excel=True, index=False)
-        print(draft_output)
-
-    slot_index = current_slot(total_output, number_of_players)
+        print(total_output)
 
     while True:
         # Receive input
@@ -347,7 +357,9 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                 break
 
             if commands[0].lower() == "print":
-                print(total_output)
+                if OUTPUT_MODE == "CD":
+                    total_output.to_clipboard(excel=True, index=False)
+                    print(total_output)
 
             if failed is False:
                 list_active = True
@@ -405,3 +417,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     else:
                         list_active = False
                     print("@{} is up now".format(draft_output.at[slot_index[0], "Player"]))
+                    if OUTPUT_MODE == "CD":
+                        total_output.to_clipboard(excel=True, index=False)
+                        print(total_output)
