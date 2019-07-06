@@ -8,13 +8,31 @@ import Draft
 
 ROUND_TIMING = [2, 1, 1]
 START_TIME = [8, 0]
-SAVE_DIR = r"C:\Users\brenn\Desktop\Runner Data"
+SAVE_DIR = r"E:\_Python Projects\Draft Runner Data"
 OUTPUT_MODE = "CD"
 RANDOM_ORDER = True
 TIERS = False
 
+
 # TODO Add a rookie random function
 # TODO Tier support
+
+
+def get_tier_sizes(num_players, num_teams, num_picks=3):
+    tiers = math.ceil(num_players / math.floor(num_teams / num_picks))
+    current_size = math.floor(num_players / tiers)
+
+    tier_sizes = []
+
+    while num_players > current_size:
+        tier_sizes.append(current_size)
+        num_players -= current_size
+        tiers -= 1
+        current_size = math.floor(num_players / tiers)
+
+    tier_sizes.append(num_players)
+
+    return tier_sizes
 
 
 # CREATE DIRECTORY
@@ -97,5 +115,7 @@ else:
 
 print(available_team_list)
 
-Draft.run_draft(START_TIME, TIERS, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
+tier_data = get_tier_sizes(len(players_clean), len(teams_clean), len(ROUND_TIMING))
+
+Draft.run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
                 available_team_list, random_teams, teams_clean)

@@ -119,7 +119,7 @@ def get_team_info(team, available_team_list, mode, teams_clean):
         return None
 
 
-def run_draft(START_TIME, TIERS, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean, available_team_list, random_teams, teams_clean):
+def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean, available_team_list, random_teams, teams_clean):
 
     number_of_players = len(players_clean)
 
@@ -132,7 +132,6 @@ def run_draft(START_TIME, TIERS, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORD
         player_list_location = "{}\{}.txt".format(base_path, player)
         if os.path.isfile(player_list_location):
             for index in range(0, number_of_players):
-                stuff = draft_output.at[index, "Player"]
                 if player == draft_output.at[index, "Player"]:
                     draft_output.at[index, "*Status*"] = "*List*"
 
@@ -150,7 +149,7 @@ def run_draft(START_TIME, TIERS, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORD
         # Recieve input
         command = input("Enter your command: ")
         commands = command.split(" ")
-        if TIERS:
+        if len(tier_data) > 1:
             tier_value = commands[0]
             if tier_value[:1].lower() == 't':
                 if len(tier_value[1:]) > 0:
