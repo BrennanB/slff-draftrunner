@@ -129,7 +129,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
         tier_index = 1
         for tier in tier_data:  # Create each iteration of tiered draft.
             past_i = i
-            i += tier
+            i += (tier+1)
             tiered_players_clean.append(players_clean[past_i:i])
             draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean[past_i:i], ROUND_TIMING)
             headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
@@ -185,7 +185,9 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         if int(tier_value[1:]) <= tier_ratio:
                             valid_command = True
                             draft_output = d[int(tier_value[1:])]
-                            slot_index = current_slot(draft_output, number_of_players)
+                            number_of_players = tier_data[int(tier_value[1:])]
+                            slot_index = current_slot(draft_output, tier_data[int(tier_value[1:])])
+                            print(number_of_players)
                             available_team_list = tiered_available_team_list[int(tier_value[1:])]
                             commands.pop(0)
                     except ValueError:
@@ -199,7 +201,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             tier_value = None
         failed = False
         print(commands)
-        if valid_command:  # If tier value exists, or if there are no tiers.
+        if valid_command and len(commands) != 0:  # If tier value exists, or if there are no tiers.
             if slot_index is None:
                 print("Done Draft")
             else:  # Not complete draft
@@ -441,3 +443,5 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             tiered_available_team_list.update({int(tier_value[1:]): available_team_list})
                             print("Here fam 2 {}".format(tiered_available_team_list))
                         print(total_output)
+        else:
+            print("Invalid Command, please enter more than just tier value")
