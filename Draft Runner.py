@@ -113,8 +113,6 @@ else:
     for team in base_team_list:
         available_team_list.append([team, tier_ratio])
 
-print(available_team_list)
-
 tier_data = get_tier_sizes(len(players_clean), len(teams_clean), len(ROUND_TIMING))
 
 Draft.run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
