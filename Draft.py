@@ -4,7 +4,6 @@ import re
 
 
 def available_teams(available_team_list, tier_ratio):
-
     displayed_teams = []
     for team in available_team_list:
         if team[1] != 0:
@@ -12,7 +11,7 @@ def available_teams(available_team_list, tier_ratio):
 
     if tier_ratio > 1:  # Multiple teams are required
         teams = ["{} ({})".format(team[0], team[1]) for team in displayed_teams]
-    else:   # Single teams only
+    else:  # Single teams only
         teams = [team[0] for team in displayed_teams]
 
     convert = lambda text: int(text) if text.isdigit() else text
@@ -119,8 +118,8 @@ def get_team_info(team, available_team_list, mode, teams_clean):
         return None
 
 
-def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean, available_team_list, random_teams, teams_clean):
-
+def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
+              available_team_list, random_teams, teams_clean):
     number_of_players = len(players_clean)
 
     if len(tier_data) > 1:
@@ -139,14 +138,14 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             for player in players_clean[past_i:i]:
                 player_list_location = "{}\{}.txt".format(base_path, player)
                 if os.path.isfile(player_list_location):
-                    for index in range(0, len(tiered_players_clean[tier_index-1])):
+                    for index in range(0, len(tiered_players_clean[tier_index - 1])):
                         draft_output = d[tier_index]
                         if player == draft_output.at[index, "Player"]:
                             draft_output.at[index, "*Status*"] = "*List*"
                             d.update({tier_index: draft_output})
             tier_index += 1
         print(d)
-    else:   # Tiers aren't being run
+    else:  # Tiers aren't being run
         draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean, ROUND_TIMING)
         headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
         draft_output = pd.DataFrame(draft_info, columns=headers)
@@ -174,6 +173,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
         # Receive input
         command = input("Enter your command: ")
         valid_command = False
+        printed = False
         commands = command.split(" ")
         if len(tier_data) > 1:
             tier_value = commands[0]
@@ -192,7 +192,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
         else:
             valid_command = True
         failed = False
-        if valid_command:   # If tier value exists, or if there are no tiers.
+        if valid_command:  # If tier value exists, or if there are no tiers.
             if slot_index is None:
                 print("Done Draft")
             else:  # Not complete draft
@@ -358,6 +358,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
 
             if commands[0].lower() == "print":
                 if OUTPUT_MODE == "CD":
+                    printed = True
                     total_output.to_clipboard(excel=True, index=False)
                     print(total_output)
 
@@ -376,7 +377,8 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     if slot_index is not None:
                         if draft_output.at[slot_index[0], "*Status*"] == "*List*":
                             print("Yo they got a list for {}!".format(draft_output.at[slot_index[0], "Player"]))
-                            player_list_location = "{}\{}.txt".format(base_path, draft_output.at[slot_index[0], "Player"])
+                            player_list_location = "{}\{}.txt".format(base_path,
+                                                                      draft_output.at[slot_index[0], "Player"])
                             f = open(player_list_location, "r")
                             player_list_teams = f.readlines()
                             player_list_teams_clean = [x.replace('\n', '') for x in player_list_teams]
@@ -396,13 +398,14 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                 trying = True
                                 for random_team in random_teams:
                                     for available_team in available_team_list:
-                                        if available_team[0] == random_team and trying is True and available_team[1] != 0:
+                                        if available_team[0] == random_team and trying is True and \
+                                                available_team[1] != 0:
                                             draft_output.at[slot_index[0], slot_index[1]] = random_team
                                             available_team_list.remove(available_team)
                                             available_team_list.append([available_team[0], available_team[1] - 1])
                                             trying = False
-                        elif draft_output.at[slot_index[0], "*Status*"] == "*MIA*" or draft_output.at[
-                            slot_index[0], "*Status*"] == "*Missing*":
+                        elif draft_output.at[slot_index[0], "*Status*"] == "*MIA*" or  \
+                                draft_output.at[slot_index[0], "*Status*"] == "*Missing*":
                             trying = True
                             for random_team in random_teams:
                                 for available_team in available_team_list:
@@ -417,6 +420,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     else:
                         list_active = False
                     print("@{} is up now".format(draft_output.at[slot_index[0], "Player"]))
-                    if OUTPUT_MODE == "CD":
+                    if OUTPUT_MODE == "CD" and printed is False:
                         total_output.to_clipboard(excel=True, index=False)
                         print(total_output)
