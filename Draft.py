@@ -143,7 +143,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         if player == draft_output.at[index, "Player"]:
                             draft_output.at[index, "*Status*"] = "*List*"
                             d.update({tier_index: draft_output})
-            tiered_available_team_list[tier_index] = available_team_list
+            tiered_available_team_list.update({tier_index: available_team_list[:]})
             tier_index += 1
     else:  # Tiers aren't being run
         draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean, ROUND_TIMING)
@@ -186,11 +186,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             valid_command = True
                             draft_output = d[int(tier_value[1:])]
                             slot_index = current_slot(draft_output, number_of_players)
-                            print(tiered_available_team_list)
                             available_team_list = tiered_available_team_list[int(tier_value[1:])]
-                            print("Available teamlist is:{}".format(available_team_list))
-                            print(draft_output)
-                            print("it's a tier")
                             commands.pop(0)
                     except ValueError:
                         print("'{}' is not a number, please use a number for the tier value".format(tier_value[1:]))
@@ -221,6 +217,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                 if commands[1] in current_team and trying is True:
                                     if current_team[1] != 0:
                                         available_team_list.remove(current_team)
+                                        print(tiered_available_team_list)
                                         available_team_list.append([current_team[0], (current_team[1] - 1)])
                                         print(available_team_list)
                                         draft_output.at[slot_index[0], slot_index[1]] = commands[1]
@@ -440,5 +437,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         total_output.to_clipboard(excel=True, index=False)
                         if len(tier_data) > 1:
                             d.update({int(tier_value[1:]): draft_output})
+                            print("Here fam {}".format(tiered_available_team_list))
                             tiered_available_team_list.update({int(tier_value[1:]): available_team_list})
+                            print("Here fam 2 {}".format(tiered_available_team_list))
                         print(total_output)
