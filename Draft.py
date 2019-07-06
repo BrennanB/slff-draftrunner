@@ -18,7 +18,7 @@ def available_teams(available_team_list, tier_ratio):
     convert = lambda text: int(text) if text.isdigit() else text
     alphanum_key = lambda key: [convert(c) for c in re.split("([0-9]+)", key)]
     teams.sort(key=alphanum_key)
-    team_headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "+", "-"]
+    team_headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
     i = 0
     team_lists = [["", "", "", "", "", "", ""], ["**Available Teams**", "", "", "", "", "", ""]]
     mini_team_list = []
@@ -122,9 +122,17 @@ def get_team_info(team, available_team_list, mode, teams_clean):
 def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean, available_team_list, random_teams, teams_clean):
 
     number_of_players = len(players_clean)
+    tiered_players_clean = []
+    i = 0
+    if len(tier_data) > 1:
+        for tier in tier_data:
+            past_i = i
+            i += tier
+            tiered_players_clean.append(players_clean[past_i:i])
+
 
     draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean, ROUND_TIMING)
-    headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "+", "-"]
+    headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
     draft_output = pd.DataFrame(draft_info, columns=headers)
 
     # Checked for Saved Lists
@@ -146,7 +154,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
     slot_index = current_slot(total_output, number_of_players)
 
     while True:
-        # Recieve input
+        # Receive input
         command = input("Enter your command: ")
         valid_command = False
         commands = command.split(" ")
@@ -310,7 +318,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
 
             if commands[0].lower() == "list" or commands[0].lower() == "l":
                 if len(commands) != 2:
-                    print("Incorrect formatting, please use list [player name]")
+                    print("Incorrect formatting, please use list [player name]. Player names are caps sensitive.")
                     failed = True
                 else:
                     if commands[1] in players_clean:
