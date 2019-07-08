@@ -123,6 +123,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
     number_of_players = len(players_clean)
     d = {}
     tiered_available_team_list = {}
+
     if len(tier_data) > 1:
         tiered_players_clean = []
         i = 0
@@ -145,6 +146,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             d.update({tier_index: draft_output})
             tiered_available_team_list.update({tier_index: available_team_list[:]})
             tier_index += 1
+
     else:  # Tiers aren't being run
         draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean, ROUND_TIMING)
         headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
@@ -171,12 +173,14 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
     else:
         print("There are {} tiers, to post the tiers, please use the 'print' command".format(len(tier_data)))
 
+    #TODO Lists don't auto-complete when the first player has a list, and the data has been loaded
     while True:
         # Receive input
         command = input("Enter your command: ")
         valid_command = False
         printed = False
         commands = command.split(" ")
+
         if len(tier_data) > 1:
             tier_value = commands[0]
             if tier_value[:1].lower() == 't':
@@ -188,6 +192,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             number_of_players = tier_data[int(tier_value[1:])]
                             slot_index = current_slot(draft_output, tier_data[int(tier_value[1:])])
                             print(number_of_players)
+                            players_clean = tiered_players_clean[int(tier_value[1:])-1]
                             available_team_list = tiered_available_team_list[int(tier_value[1:])]
                             commands.pop(0)
                     except ValueError:
@@ -199,6 +204,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
         else:
             valid_command = True
             tier_value = None
+
         failed = False
         print(commands)
         if valid_command and len(commands) != 0:  # If tier value exists, or if there are no tiers.
