@@ -188,8 +188,8 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         if int(tier_value[1:]) <= tier_ratio:
                             valid_command = True
                             draft_output = d[int(tier_value[1:])]
-                            number_of_players = tier_data[int(tier_value[1:])] + 1
-                            slot_index = current_slot(draft_output, tier_data[int(tier_value[1:])])
+                            number_of_players = (tier_data[int(tier_value[1:])] + 1)
+                            slot_index = current_slot(draft_output, number_of_players)
                             players_clean = tiered_players_clean[int(tier_value[1:])-1]
                             available_team_list = tiered_available_team_list[int(tier_value[1:])]
                             commands.pop(0)
@@ -215,7 +215,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     if len(commands) != 2:
                         print("Please check your formatting")
                     else:
-                        print("picking")
                         trying = True
                         failed = None
                         while trying:
@@ -223,9 +222,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                 if commands[1] in current_team and trying is True:
                                     if current_team[1] != 0:
                                         available_team_list.remove(current_team)
-                                        print(tiered_available_team_list)
                                         available_team_list.append([current_team[0], (current_team[1] - 1)])
-                                        print(available_team_list)
                                         draft_output.at[slot_index[0], slot_index[1]] = commands[1]
                                         draft_output.at[slot_index[0], "*Status*"] = "*Live Picking*"
                                         trying = False
@@ -361,7 +358,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         player_list_location = "{}\{}.txt".format(base_path, commands[1])
 
                         if os.path.isfile(player_list_location):
-                            print("True")
                             pass
                         else:
                             f = open(player_list_location, "w")
@@ -400,7 +396,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
 
                     if OUTPUT_MODE == "CD":
                         total_output.to_clipboard(excel=True, index=False)
-
                     slot_index = current_slot(total_output, number_of_players)
                     if slot_index is not None:
                         if draft_output.at[slot_index[0], "*Status*"] == "*List*":
@@ -447,15 +442,15 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             list_active = False
                     else:
                         list_active = False
-                    if slot_index is not None:
-                        print("@{} is up now".format(draft_output.at[slot_index[0], "Player"]))
-                    else:
-                        print("Draft is complete!")
                     if OUTPUT_MODE == "CD" and printed is False:
                         total_output.to_clipboard(excel=True, index=False)
                         if len(tier_data) > 1:
                             d.update({int(tier_value[1:]): draft_output})
                             tiered_available_team_list.update({int(tier_value[1:]): available_team_list})
                         print(total_output)
+                    if slot_index is not None:
+                        print("@{} is up now".format(draft_output.at[slot_index[0], "Player"]))
+                    else:
+                        print("Draft is complete!")
         else:
             print("Invalid Command, please enter more than just tier value")
