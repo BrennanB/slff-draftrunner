@@ -207,7 +207,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
         print(commands)
         if valid_command and len(commands) != 0:  # If tier value exists, or if there are no tiers.
             if slot_index is None:
-                print("Done Draft")
+                print("Draft is complete, this command is not available.")
             else:  # Not complete draft
                 # ======================================PICK CODE======================================
 
@@ -331,21 +331,24 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         #     failed = True
             # ======================================RANDOM CODE======================================
 
-            if commands[0].lower() == "random" or commands[0].lower() == "r":
-                trying = True
-                for random_team in random_teams:
-                    for available_team in available_team_list:
-                        if available_team[0] == random_team and trying is True and available_team[1] != 0:
-                            draft_output.at[slot_index[0], slot_index[1]] = random_team
-                            available_team_list.remove(available_team)
-                            available_team_list.append([available_team[0], available_team[1] - 1])
-                            if draft_output.at[slot_index[0], "*Status*"] == "*Live Picking*" or draft_output.at[
-                                slot_index[0], "*Status*"] == "*List*":
-                                if slot_index[1] == "Team 1":
-                                    draft_output.at[slot_index[0], "*Status*"] = "*MIA*"
-                                else:
-                                    draft_output.at[slot_index[0], "*Status*"] = "*Missing*"
-                            trying = False
+            if slot_index is None:
+                print("Draft is complete, this command is not available.")
+            else:  # Not complete draft
+                if commands[0].lower() == "random" or commands[0].lower() == "r":
+                    trying = True
+                    for random_team in random_teams:
+                        for available_team in available_team_list:
+                            if available_team[0] == random_team and trying is True and available_team[1] != 0:
+                                draft_output.at[slot_index[0], slot_index[1]] = random_team
+                                available_team_list.remove(available_team)
+                                available_team_list.append([available_team[0], available_team[1] - 1])
+                                if draft_output.at[slot_index[0], "*Status*"] == "*Live Picking*" or draft_output.at[
+                                    slot_index[0], "*Status*"] == "*List*":
+                                    if slot_index[1] == "Team 1":
+                                        draft_output.at[slot_index[0], "*Status*"] = "*MIA*"
+                                    else:
+                                        draft_output.at[slot_index[0], "*Status*"] = "*Missing*"
+                                trying = False
 
             # ======================================LIST SETUP CODE======================================
             #TODO Adding a list doesn't correctly add to a player
@@ -444,7 +447,10 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             list_active = False
                     else:
                         list_active = False
-                    print("@{} is up now".format(draft_output.at[slot_index[0], "Player"]))
+                    if slot_index is not None:
+                        print("@{} is up now".format(draft_output.at[slot_index[0], "Player"]))
+                    else:
+                        print("Draft is complete!")
                     if OUTPUT_MODE == "CD" and printed is False:
                         total_output.to_clipboard(excel=True, index=False)
                         if len(tier_data) > 1:
