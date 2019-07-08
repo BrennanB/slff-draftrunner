@@ -344,7 +344,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             trying = False
 
             # ======================================LIST SETUP CODE======================================
-
+            #TODO Adding a list doesn't correctly add to a player
             if commands[0].lower() == "list" or commands[0].lower() == "l":
                 if len(commands) != 2:
                     print("Incorrect formatting, please use list [player name]. Player names are caps sensitive.")
@@ -370,6 +370,12 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
 
             if commands[0].lower() == "print":
                 if OUTPUT_MODE == "CD":
+                    if len(tier_data) == 1:
+                        teams_output = available_teams(available_team_list, tier_ratio)
+                    else:
+                        teams_output = available_teams(available_team_list, 1)
+                    available_team_list = teams_output[1]
+                    total_output = draft_output.append(teams_output[0], ignore_index=True)
                     printed = True
                     total_output.to_clipboard(excel=True, index=False)
                     print(total_output)
