@@ -69,10 +69,9 @@ def setup_draft(start_hour, start_minute, players, ROUND_TIMING):
         i += 1
     return table
 
-
+#TODO Fix pointer bug where the number of players value is actually correct
 def current_slot(df, number_of_players):
     index = ["Team 1", "Team 2", "Team 3"]
-
     for player in range(0, number_of_players):
         if ":" in df.at[player, index[0]]:
             return [player, index[0]]
@@ -189,9 +188,8 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         if int(tier_value[1:]) <= tier_ratio:
                             valid_command = True
                             draft_output = d[int(tier_value[1:])]
-                            number_of_players = tier_data[int(tier_value[1:])]
+                            number_of_players = tier_data[int(tier_value[1:])] + 1
                             slot_index = current_slot(draft_output, tier_data[int(tier_value[1:])])
-                            print(number_of_players)
                             players_clean = tiered_players_clean[int(tier_value[1:])-1]
                             available_team_list = tiered_available_team_list[int(tier_value[1:])]
                             commands.pop(0)
@@ -451,9 +449,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         total_output.to_clipboard(excel=True, index=False)
                         if len(tier_data) > 1:
                             d.update({int(tier_value[1:]): draft_output})
-                            print("Here fam {}".format(tiered_available_team_list))
                             tiered_available_team_list.update({int(tier_value[1:]): available_team_list})
-                            print("Here fam 2 {}".format(tiered_available_team_list))
                         print(total_output)
         else:
             print("Invalid Command, please enter more than just tier value")
