@@ -11,7 +11,7 @@ START_TIME = [8, 0]
 SAVE_DIR = r"E:\_Python Projects\Draft Runner Data"
 OUTPUT_MODE = "CD"
 RANDOM_ORDER = True
-TIERS = False
+TIERS = True
 
 
 # TODO Add a rookie random function
@@ -106,16 +106,15 @@ available_team_list = []
 mini_available_team_list = []
 if TIERS:
     for team in base_team_list:
-        mini_available_team_list.append(team)
-    for i in range(0, tier_ratio):
-        available_team_list.append(mini_available_team_list)
+        available_team_list.append([team, 1])
 else:
     for team in base_team_list:
         available_team_list.append([team, tier_ratio])
 
-print(available_team_list)
-
-tier_data = get_tier_sizes(len(players_clean), len(teams_clean), len(ROUND_TIMING))
+if TIERS:
+    tier_data = get_tier_sizes(len(players_clean), len(teams_clean), len(ROUND_TIMING))
+else:
+    tier_data = [len(players_clean)]
 
 Draft.run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
                 available_team_list, random_teams, teams_clean)
