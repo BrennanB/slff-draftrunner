@@ -26,7 +26,7 @@ Run "Draft Runner.py" file
 
 ### Commands
 
-Shortforms for each command will be denoted by (). [] denote values for the inputs.
+Shortforms for each command will be denoted by (). [] denote values for the inputs. If you have enabled tiers preface each command with t(tier number)
 
 #### pick (p) [team]
 
