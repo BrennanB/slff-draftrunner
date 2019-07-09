@@ -131,7 +131,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             past_i = i
             i += (tier+1)
             if past_i != 0:
-                tiered_players_clean.append(players_clean[(tier_index-1):(i-tier_index)])
+                tiered_players_clean.append(players_clean[(past_i-(tier_index-1)):(i-tier_index)])
                 draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean[(past_i-(tier_index-1)):(i-tier_index)], ROUND_TIMING)
             else:
                 tiered_players_clean.append(players_clean[(past_i):(i - 1)])
@@ -140,14 +140,26 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
             d[tier_index] = pd.DataFrame(draft_info, columns=headers)
             # Checked for Saved Lists
-            for player in players_clean[past_i:i]:
-                player_list_location = "{}\{}.txt".format(base_path, player)
-                if os.path.isfile(player_list_location):
-                    for index in range(0, len(tiered_players_clean[tier_index - 1])):
-                        draft_output = d[tier_index]
-                        if player == draft_output.at[index, "Player"]:
-                            draft_output.at[index, "*Status*"] = "*List*"
-                            d.update({tier_index: draft_output})
+            if past_i != 0:
+                for player in players_clean[(past_i-(tier_index-1)):(i-tier_index)]:
+                    player_list_location = "{}\{}.txt".format(base_path, player)
+                    if os.path.isfile(player_list_location):
+                        for index in range(0, len(players_clean[(past_i-(tier_index-1)):(i-tier_index)])):
+                            draft_output = d[tier_index]
+                            if player == draft_output.at[index, "Player"]:
+                                draft_output.at[index, "*Status*"] = "*List*"
+                                d.update({tier_index: draft_output})
+            else:
+                for player in players_clean[(past_i):(i - 1)]:
+                    player_list_location = "{}\{}.txt".format(base_path, player)
+                    if os.path.isfile(player_list_location):
+                        for index in range(0, len(tiered_players_clean[tier_index - 1])):
+                            draft_output = d[tier_index]
+                            if player == draft_output.at[index, "Player"]:
+                                print(player)
+                                draft_output.at[index, "*Status*"] = "*List*"
+                                d.update({tier_index: draft_output})
+            print(tier_index)
             tiered_available_team_list.update({tier_index: available_team_list[:]})
             tier_index += 1
 
@@ -369,6 +381,9 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             f = open(player_list_location, "w")
                             f.close()
                         df = os.system("notepad.exe {}".format(player_list_location))
+                        print(commands)
+                        print(players_clean)
+                        print(players_clean.index(commands[1]))
                         draft_output.at[players_clean.index(commands[1]), "*Status*"] = "*List*"
                     else:
                         print("Invalid player, ensure capitalization is the same.")
