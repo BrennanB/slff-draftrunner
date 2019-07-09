@@ -6,7 +6,7 @@ import Draft
 
 # SETTINGS
 
-ROUND_TIMING = [2, 1, 1]
+ROUND_TIMING = [2, 2, 2]
 START_TIME = [8, 0]
 SAVE_DIR = r"E:\_Python Projects\Draft Runner Data"
 OUTPUT_MODE = "CD"
@@ -115,6 +115,6 @@ if TIERS:
     tier_data = get_tier_sizes(len(players_clean), len(teams_clean), len(ROUND_TIMING))
 else:
     tier_data = [len(players_clean)]
-
+print(tier_data)
 Draft.run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
                 available_team_list, random_teams, teams_clean)
