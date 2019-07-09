@@ -131,13 +131,9 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             past_i = i
             i += (tier+1)
             if past_i != 0:
-                print("Teah")
-                print(players_clean[(past_i):(i - 1)])
-                print(players_clean[(past_i-1):(i-1)])
                 tiered_players_clean.append(players_clean[(tier_index-1):(i-tier_index)])
                 draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean[(past_i-(tier_index-1)):(i-tier_index)], ROUND_TIMING)
             else:
-                print(players_clean[(past_i):(i - 1)])
                 tiered_players_clean.append(players_clean[(past_i):(i - 1)])
                 draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean[(past_i):(i - 1)],
                                          ROUND_TIMING)
@@ -198,7 +194,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         if int(tier_value[1:]) <= tier_ratio:
                             valid_command = True
                             draft_output = d[int(tier_value[1:])]
-                            number_of_players = (tier_data[int(tier_value[1:])-1] + 1)
+                            number_of_players = (tier_data[int(tier_value[1:])-1])
                             slot_index = current_slot(draft_output, number_of_players)
                             players_clean = tiered_players_clean[int(tier_value[1:])-1]
                             available_team_list = tiered_available_team_list[int(tier_value[1:])]
@@ -251,6 +247,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     print("Incorrect formatting! Please format like: swap [swap out team] [swapped in team]")
                 else:
                     swap_index1 = swap_index(draft_output, number_of_players, commands[1])
+                    print(swap_index1)
                     if swap_index1 is not None:  # Did it find team at commands 2?
                         if len(swap_index1) > 1:
                             print("================= Choose the correct slot to swap.. =================")
