@@ -126,13 +126,13 @@ def randoms_visual_update(df, random_teams, number_of_players, available_team_li
             for available_team in available_team_list:
                 if available_team[0] == random_team and trying is True and available_team[1] != 0:
                     if i == 0:
-                        df.at[i, "Random List"] = "*{}*".format(random_team)
+                        df.at[i, "Random List"] = "*({})*".format(random_team)
                         trying = False
                     else:
                         df.at[i, "Random List"] = "*-*"
                     i2 += 1
                     if i2 == (i+1):
-                        df.at[i, "Random List"] = "*{}*".format(random_team)
+                        df.at[i, "Random List"] = "*({})*".format(random_team)
                         trying = False
                     else:
                         df.at[i, "Random List"] = "*-*"
