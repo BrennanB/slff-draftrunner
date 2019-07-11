@@ -17,7 +17,7 @@ def available_teams(available_team_list, tier_ratio):
     convert = lambda text: int(text) if text.isdigit() else text
     alphanum_key = lambda key: [convert(c) for c in re.split("([0-9]+)", key)]
     teams.sort(key=alphanum_key)
-    team_headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
+    team_headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
     i = 0
     team_lists = [["", "", "", "", "", "", ""], ["**Available Teams**", "", "", "", "", "", ""]]
     mini_team_list = []
@@ -117,6 +117,28 @@ def get_team_info(team, available_team_list, mode, teams_clean):
         return None
 
 
+def randoms_visual_update(df, random_teams, number_of_players, available_team_list):
+
+    for i in range(0, number_of_players):
+        trying = True
+        i2 = 0
+        for random_team in random_teams:
+            for available_team in available_team_list:
+                if available_team[0] == random_team and trying is True and available_team[1] != 0:
+                    if i == 0:
+                        df.at[i, "Random List"] = "*{}*".format(random_team)
+                        trying = False
+                    else:
+                        df.at[i, "Random List"] = "*-*"
+                    i2 += 1
+                    if i2 == (i+1):
+                        df.at[i, "Random List"] = "*{}*".format(random_team)
+                        trying = False
+                    else:
+                        df.at[i, "Random List"] = "*-*"
+    return df
+
+
 def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
               available_team_list, random_teams, teams_clean):
     number_of_players = len(players_clean)
@@ -137,7 +159,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                 tiered_players_clean.append(players_clean[(past_i):(i - 1)])
                 draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean[(past_i):(i - 1)],
                                          ROUND_TIMING)
-            headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
+            headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
             d[tier_index] = pd.DataFrame(draft_info, columns=headers)
             # Checked for Saved Lists
             if past_i != 0:
@@ -156,17 +178,14 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         for index in range(0, len(tiered_players_clean[tier_index - 1])):
                             draft_output = d[tier_index]
                             if player == draft_output.at[index, "Player"]:
-                                print(player)
                                 draft_output.at[index, "*Status*"] = "*List*"
                                 d.update({tier_index: draft_output})
-            print(tier_index)
             tiered_available_team_list.update({tier_index: available_team_list[:]})
             tier_index += 1
 
-
     else:  # Tiers aren't being run
         draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean, ROUND_TIMING)
-        headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "-"]
+        headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
         draft_output = pd.DataFrame(draft_info, columns=headers)
         tiered_players_clean = None
 
@@ -185,6 +204,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
         slot_index = current_slot(total_output, number_of_players)
     if len(tier_data) == 1:
         if OUTPUT_MODE == "CD":
+            total_output = randoms_visual_update(total_output, random_teams, number_of_players, available_team_list)
             total_output.to_clipboard(excel=True, index=False)
             print(total_output)
     else:
@@ -401,6 +421,8 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     available_team_list = teams_output[1]
                     total_output = draft_output.append(teams_output[0], ignore_index=True)
                     printed = True
+                    total_output = randoms_visual_update(total_output, random_teams, number_of_players,
+                                                         available_team_list)
                     total_output.to_clipboard(excel=True, index=False)
                     print(total_output)
 
@@ -416,6 +438,8 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     total_output = draft_output.append(teams_output[0], ignore_index=True)
 
                     if OUTPUT_MODE == "CD":
+                        total_output = randoms_visual_update(total_output, random_teams, number_of_players,
+                                                             available_team_list)
                         total_output.to_clipboard(excel=True, index=False)
                     slot_index = current_slot(total_output, number_of_players)
                     if slot_index is not None:
@@ -464,6 +488,8 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     else:
                         list_active = False
                     if OUTPUT_MODE == "CD" and printed is False:
+                        total_output = randoms_visual_update(total_output, random_teams, number_of_players,
+                                                             available_team_list)
                         total_output.to_clipboard(excel=True, index=False)
                         if len(tier_data) > 1:
                             d.update({int(tier_value[1:]): draft_output})
