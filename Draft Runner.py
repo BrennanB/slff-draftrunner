@@ -13,9 +13,7 @@ OUTPUT_MODE = "CD"
 RANDOM_ORDER = True
 TIERS = True
 
-
 # TODO Add a rookie random function
-# TODO Tier support
 
 
 def get_tier_sizes(num_players, num_teams, num_picks=3):

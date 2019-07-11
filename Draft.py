@@ -69,7 +69,7 @@ def setup_draft(start_hour, start_minute, players, ROUND_TIMING):
         i += 1
     return table
 
-#TODO Fix pointer bug where the number of players value is actually correct
+
 def current_slot(df, number_of_players):
     index = ["Team 1", "Team 2", "Team 3"]
     for player in range(0, number_of_players):
