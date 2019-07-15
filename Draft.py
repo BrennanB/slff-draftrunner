@@ -140,7 +140,7 @@ def randoms_visual_update(df, random_teams, number_of_players, available_team_li
 
 
 def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
-              available_team_list, random_teams, teams_clean):
+              available_team_list, random_teams, teams_clean, event_name):
     number_of_players = len(players_clean)
     d = {}
     tiered_available_team_list = {}
@@ -205,8 +205,18 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
     if len(tier_data) == 1:
         if OUTPUT_MODE == "CD":
             total_output = randoms_visual_update(total_output, random_teams, number_of_players, available_team_list)
-            total_output.to_clipboard(excel=True, index=False)
-            print(total_output)
+
+            if slot_index is not None:
+                player_up = "@{}".format(draft_output.at[slot_index[0], "Player"])
+            else:
+                player_up = "Done!"
+            headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
+            ping_data = [["-", "", "", "", "", "", ""],
+                         [player_up, "is up", "", "", "", "", event_name]]
+            player_ping = pd.DataFrame(ping_data, columns=headers)
+            super_output = total_output.append(player_ping, ignore_index=True)
+            super_output.to_clipboard(excel=True, index=False)
+            print(super_output)
     else:
         print("There are {} tiers, to post the tiers, please use the 'print' command".format(len(tier_data)))
 
@@ -423,8 +433,20 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     printed = True
                     total_output = randoms_visual_update(total_output, random_teams, number_of_players,
                                                          available_team_list)
-                    total_output.to_clipboard(excel=True, index=False)
-                    print(total_output)
+                    if slot_index is not None:
+                        player_up = "@{}".format(draft_output.at[slot_index[0], "Player"])
+                    else:
+                        player_up = "Done!"
+                    headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
+                    if len(tier_data) > 1:
+                        ping_data = [["-", "", "", "", "", "", ""],
+                                     [player_up, "is up", "", "", "", "", "T{} at {}".format(tier_value[1:],event_name)]]
+                    else:
+                        ping_data = [["-", "", "", "", "", "", ""],
+                                     [player_up, "is up", "", "", "", "", event_name]]
+                    player_ping = pd.DataFrame(ping_data, columns=headers)
+                    super_output = total_output.append(player_ping, ignore_index=True)
+                    print(super_output)
 
             if failed is False:
                 list_active = True
@@ -440,7 +462,21 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     if OUTPUT_MODE == "CD":
                         total_output = randoms_visual_update(total_output, random_teams, number_of_players,
                                                              available_team_list)
-                        total_output.to_clipboard(excel=True, index=False)
+                        if slot_index is not None:
+                            player_up = "@{}".format(draft_output.at[slot_index[0], "Player"])
+                        else:
+                            player_up = "Done!"
+                        headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
+                        if len(tier_data) > 1:
+                            ping_data = [["-", "", "", "", "", "", ""],
+                                         [player_up, "is up", "", "", "", "",
+                                          "T{} at {}".format(tier_value[1:], event_name)]]
+                        else:
+                            ping_data = [["-", "", "", "", "", "", ""],
+                                         [player_up, "is up", "", "", "", "", event_name]]
+                        player_ping = pd.DataFrame(ping_data, columns=headers)
+                        super_output = total_output.append(player_ping, ignore_index=True)
+                        super_output.to_clipboard(excel=True, index=False)
                     slot_index = current_slot(total_output, number_of_players)
                     if slot_index is not None:
                         if draft_output.at[slot_index[0], "*Status*"] == "*List*":
@@ -490,14 +526,25 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     if OUTPUT_MODE == "CD" and printed is False:
                         total_output = randoms_visual_update(total_output, random_teams, number_of_players,
                                                              available_team_list)
-                        total_output.to_clipboard(excel=True, index=False)
+                        if slot_index is not None:
+                            player_up = "@{}".format(draft_output.at[slot_index[0], "Player"])
+                        else:
+                            player_up = "Done!"
+                        headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
+                        if len(tier_data) > 1:
+                            ping_data = [["-", "", "", "", "", "", ""],
+                                         [player_up, "is up", "", "", "", "",
+                                          "T{} at {}".format(tier_value[1:], event_name)]]
+                        else:
+                            ping_data = [["-", "", "", "", "", "", ""],
+                                         [player_up, "is up", "", "", "", "", event_name]]
+                        player_ping = pd.DataFrame(ping_data, columns=headers)
+                        super_output = total_output.append(player_ping, ignore_index=True)
+                        super_output.to_clipboard(excel=True, index=False)
+                        print(super_output)
                         if len(tier_data) > 1:
                             d.update({int(tier_value[1:]): draft_output})
                             tiered_available_team_list.update({int(tier_value[1:]): available_team_list})
-                        print(total_output)
-                    if slot_index is not None:
-                        print("@{} is up now".format(draft_output.at[slot_index[0], "Player"]))
-                    else:
-                        print("Draft is complete!")
+
         else:
             print("Invalid Command, please enter more than just tier value")

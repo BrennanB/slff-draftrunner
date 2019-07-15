@@ -115,4 +115,4 @@ else:
     tier_data = [len(players_clean)]
 print(tier_data)
 Draft.run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
-                available_team_list, random_teams, teams_clean)
+                available_team_list, random_teams, teams_clean, event_name)
