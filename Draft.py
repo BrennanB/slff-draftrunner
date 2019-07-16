@@ -139,8 +139,20 @@ def randoms_visual_update(df, random_teams, number_of_players, available_team_li
     return df
 
 
+def check_saved_lists(base_path, players_clean, number_of_players, draft_output):
+    # Checked for Saved Lists
+    for player in players_clean:
+        player_list_location = "{}\{}.txt".format(base_path, player)
+        if os.path.isfile(player_list_location):
+            for index in range(0, number_of_players):
+                if player == draft_output.at[index, "Player"]:
+                    draft_output.at[index, "*Status*"] = "*List*"
+    return draft_output
+
 def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
               available_team_list, random_teams, teams_clean, event_name):
+
+    # DRAFT CREATION SECTION
     number_of_players = len(players_clean)
     d = {}
     tiered_available_team_list = {}
@@ -189,13 +201,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
         draft_output = pd.DataFrame(draft_info, columns=headers)
         tiered_players_clean = None
 
-        # Checked for Saved Lists
-        for player in players_clean:
-            player_list_location = "{}\{}.txt".format(base_path, player)
-            if os.path.isfile(player_list_location):
-                for index in range(0, number_of_players):
-                    if player == draft_output.at[index, "Player"]:
-                        draft_output.at[index, "*Status*"] = "*List*"
+        draft_output = check_saved_lists(base_path, players_clean, number_of_players, draft_output)
 
         teams_output = available_teams(available_team_list, tier_ratio)
         available_team_list = teams_output[1]
@@ -220,6 +226,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
     else:
         print("There are {} tiers, to post the tiers, please use the 'print' command".format(len(tier_data)))
 
+    # COMMANDS SECTION
     #TODO Lists don't auto-complete when the first player has a list, and the data has been loaded
     while True:
         # Receive input
