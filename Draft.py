@@ -149,8 +149,9 @@ def check_saved_lists(base_path, players_clean, number_of_players, draft_output)
                     draft_output.at[index, "*Status*"] = "*List*"
     return draft_output
 
-def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
-              available_team_list, random_teams, teams_clean, event_name):
+
+def create_draft(players_clean, tier_data, START_TIME, ROUND_TIMING, base_path, available_team_list, tier_ratio,
+                 OUTPUT_MODE, random_teams, event_name):
 
     # DRAFT CREATION SECTION
     number_of_players = len(players_clean)
@@ -163,10 +164,11 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
         tier_index = 1
         for tier in tier_data:  # Create each iteration of tiered draft.
             past_i = i
-            i += (tier+1)
+            i += (tier + 1)
             if past_i != 0:
-                tiered_players_clean.append(players_clean[(past_i-(tier_index-1)):(i-tier_index)])
-                draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean[(past_i-(tier_index-1)):(i-tier_index)], ROUND_TIMING)
+                tiered_players_clean.append(players_clean[(past_i - (tier_index - 1)):(i - tier_index)])
+                draft_info = setup_draft(START_TIME[0], START_TIME[1],
+                                         players_clean[(past_i - (tier_index - 1)):(i - tier_index)], ROUND_TIMING)
             else:
                 tiered_players_clean.append(players_clean[(past_i):(i - 1)])
                 draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean[(past_i):(i - 1)],
@@ -175,10 +177,10 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             d[tier_index] = pd.DataFrame(draft_info, columns=headers)
             # Checked for Saved Lists
             if past_i != 0:
-                for player in players_clean[(past_i-(tier_index-1)):(i-tier_index)]:
+                for player in players_clean[(past_i - (tier_index - 1)):(i - tier_index)]:
                     player_list_location = "{}\{}.txt".format(base_path, player)
                     if os.path.isfile(player_list_location):
-                        for index in range(0, len(players_clean[(past_i-(tier_index-1)):(i-tier_index)])):
+                        for index in range(0, len(players_clean[(past_i - (tier_index - 1)):(i - tier_index)])):
                             draft_output = d[tier_index]
                             if player == draft_output.at[index, "Player"]:
                                 draft_output.at[index, "*Status*"] = "*List*"
@@ -194,7 +196,8 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                 d.update({tier_index: draft_output})
             tiered_available_team_list.update({tier_index: available_team_list[:]})
             tier_index += 1
-
+        print("There are {} tiers, to post the tiers, please use the 'print' command".format(len(tier_data)))
+        return {"tiered_available_team_list": tiered_available_team_list, "d": d, "tiered_players_clean": tiered_players_clean}
     else:  # Tiers aren't being run
         draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean, ROUND_TIMING)
         headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
@@ -208,7 +211,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
         total_output = draft_output.append(teams_output[0], ignore_index=True)
 
         slot_index = current_slot(total_output, number_of_players)
-    if len(tier_data) == 1:
+
         if OUTPUT_MODE == "CD":
             total_output = randoms_visual_update(total_output, random_teams, number_of_players, available_team_list)
 
@@ -223,8 +226,23 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             super_output = total_output.append(player_ping, ignore_index=True)
             super_output.to_clipboard(excel=True, index=False)
             print(super_output)
+        return {"slot_index": slot_index, "draft_output": draft_output, "number_of_players": number_of_players}
+
+
+def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
+              available_team_list, random_teams, teams_clean, event_name):
+
+    draft_info = create_draft(players_clean, tier_data, START_TIME, ROUND_TIMING, base_path, available_team_list,
+                              tier_ratio, OUTPUT_MODE, random_teams, event_name)
+
+    if len(tier_data) > 1:
+        d = draft_info['d']
+        tiered_players_clean = draft_info['tiered_players_clean']
+        tiered_available_team_list = draft_info['tiered_available_team_list']
     else:
-        print("There are {} tiers, to post the tiers, please use the 'print' command".format(len(tier_data)))
+        slot_index = draft_info['slot_index']
+        draft_output = draft_info['draft_output']
+        number_of_players = draft_info['number_of_players']
 
     # COMMANDS SECTION
     #TODO Lists don't auto-complete when the first player has a list, and the data has been loaded
@@ -259,7 +277,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             tier_value = None
 
         failed = False
-        print(commands)
         if valid_command and len(commands) != 0:  # If tier value exists, or if there are no tiers.
             if slot_index is None:
                 print("Draft is complete, this command is not available.")
