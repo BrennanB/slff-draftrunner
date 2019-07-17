@@ -143,6 +143,66 @@ def check_saved_lists(base_path, players_clean, number_of_players, draft_output)
     return draft_output
 
 
+def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output, number_of_players, base_path, random_teams):
+    list_active = True
+    while list_active:
+        # Output Results
+        if len(tier_data) == 1:
+            teams_output = available_teams(available_team_list, tier_ratio)
+        else:
+            teams_output = available_teams(available_team_list, 1)
+        available_team_list = teams_output[1]
+        total_output = draft_output.append(teams_output[0], ignore_index=True)
+
+        slot_index = current_slot(total_output, number_of_players)
+        if slot_index is not None:
+            if draft_output.at[slot_index[0], "*Status*"] == "*List*":
+                print("Yo they got a list for {}!".format(draft_output.at[slot_index[0], "Player"]))
+                player_list_location = "{}\{}.txt".format(base_path,
+                                                          draft_output.at[slot_index[0], "Player"])
+                f = open(player_list_location, "r")
+                player_list_teams = f.readlines()
+                player_list_teams_clean = [x.replace('\n', '') for x in player_list_teams]
+                trying = True
+                found_team = False
+                for player_team in player_list_teams_clean:
+                    for available_team in available_team_list:
+                        if available_team[0] == player_team and trying is True and available_team[1] != 0:
+                            draft_output.at[slot_index[0], slot_index[1]] = player_team
+                            available_team_list.remove(available_team)
+                            available_team_list.append([available_team[0], available_team[1] - 1])
+                            trying = False
+                            found_team = True
+
+                if found_team is False:
+                    print("No valid picks on list, finding next random team.")
+                    trying = True
+                    for random_team in random_teams:
+                        for available_team in available_team_list:
+                            if available_team[0] == random_team and trying is True and \
+                                    available_team[1] != 0:
+                                draft_output.at[slot_index[0], slot_index[1]] = random_team
+                                available_team_list.remove(available_team)
+                                available_team_list.append([available_team[0], available_team[1] - 1])
+                                trying = False
+            elif draft_output.at[slot_index[0], "*Status*"] == "*MIA*" or \
+                    draft_output.at[slot_index[0], "*Status*"] == "*Missing*":
+                trying = True
+                for random_team in random_teams:
+                    for available_team in available_team_list:
+                        if available_team[0] == random_team and trying is True and available_team[1] != 0:
+                            draft_output.at[slot_index[0], slot_index[1]] = random_team
+                            available_team_list.remove(available_team)
+                            available_team_list.append([available_team[0], available_team[1] - 1])
+                            trying = False
+
+            else:
+                list_active = False
+        else:
+            list_active = False
+    return {"slot_index": slot_index, "available_team_list": available_team_list, "draft_output": draft_output}
+
+
 def create_draft(players_clean, tier_data, START_TIME, ROUND_TIMING, base_path, available_team_list, tier_ratio,
                  OUTPUT_MODE, random_teams, event_name):
 
@@ -420,102 +480,39 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     print(super_output)
 
             if super_failed is False:
-                list_active = True
-                while list_active:
-                    # Output Results
+                list_results = check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output,
+                                                   number_of_players, base_path, random_teams)
+                slot_index = list_results['slot_index']
+                available_team_list = list_results['available_team_list']
+                draft_output = list_results['draft_output']
+                if OUTPUT_MODE == "CD" and printed is False:
                     if len(tier_data) == 1:
                         teams_output = available_teams(available_team_list, tier_ratio)
                     else:
                         teams_output = available_teams(available_team_list, 1)
                     available_team_list = teams_output[1]
                     total_output = draft_output.append(teams_output[0], ignore_index=True)
-
-                    if OUTPUT_MODE == "CD":
-                        total_output = randoms_visual_update(total_output, random_teams, number_of_players,
-                                                             available_team_list)
-                        if slot_index is not None:
-                            player_up = "@{}".format(draft_output.at[slot_index[0], "Player"])
-                        else:
-                            player_up = "Done!"
-                        headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
-                        if len(tier_data) > 1:
-                            ping_data = [["-", "", "", "", "", "", ""],
-                                         [player_up, "is up", "", "", "", "",
-                                          "T{} at {}".format(tier_value[1:], event_name)]]
-                        else:
-                            ping_data = [["-", "", "", "", "", "", ""],
-                                         [player_up, "is up", "", "", "", "", event_name]]
-                        player_ping = pd.DataFrame(ping_data, columns=headers)
-                        super_output = total_output.append(player_ping, ignore_index=True)
-                        super_output.to_clipboard(excel=True, index=False)
-                    slot_index = current_slot(total_output, number_of_players)
+                    total_output = randoms_visual_update(total_output, random_teams, number_of_players,
+                                                         available_team_list)
                     if slot_index is not None:
-                        if draft_output.at[slot_index[0], "*Status*"] == "*List*":
-                            print("Yo they got a list for {}!".format(draft_output.at[slot_index[0], "Player"]))
-                            player_list_location = "{}\{}.txt".format(base_path,
-                                                                      draft_output.at[slot_index[0], "Player"])
-                            f = open(player_list_location, "r")
-                            player_list_teams = f.readlines()
-                            player_list_teams_clean = [x.replace('\n', '') for x in player_list_teams]
-                            trying = True
-                            found_team = False
-                            for player_team in player_list_teams_clean:
-                                for available_team in available_team_list:
-                                    if available_team[0] == player_team and trying is True and available_team[1] != 0:
-                                        draft_output.at[slot_index[0], slot_index[1]] = player_team
-                                        available_team_list.remove(available_team)
-                                        available_team_list.append([available_team[0], available_team[1] - 1])
-                                        trying = False
-                                        found_team = True
-
-                            if found_team is False:
-                                print("No valid picks on list, finding next random team.")
-                                trying = True
-                                for random_team in random_teams:
-                                    for available_team in available_team_list:
-                                        if available_team[0] == random_team and trying is True and \
-                                                available_team[1] != 0:
-                                            draft_output.at[slot_index[0], slot_index[1]] = random_team
-                                            available_team_list.remove(available_team)
-                                            available_team_list.append([available_team[0], available_team[1] - 1])
-                                            trying = False
-                        elif draft_output.at[slot_index[0], "*Status*"] == "*MIA*" or  \
-                                draft_output.at[slot_index[0], "*Status*"] == "*Missing*":
-                            trying = True
-                            for random_team in random_teams:
-                                for available_team in available_team_list:
-                                    if available_team[0] == random_team and trying is True and available_team[1] != 0:
-                                        draft_output.at[slot_index[0], slot_index[1]] = random_team
-                                        available_team_list.remove(available_team)
-                                        available_team_list.append([available_team[0], available_team[1] - 1])
-                                        trying = False
-
-                        else:
-                            list_active = False
+                        player_up = "@{}".format(draft_output.at[slot_index[0], "Player"])
                     else:
-                        list_active = False
-                    if OUTPUT_MODE == "CD" and printed is False:
-                        total_output = randoms_visual_update(total_output, random_teams, number_of_players,
-                                                             available_team_list)
-                        if slot_index is not None:
-                            player_up = "@{}".format(draft_output.at[slot_index[0], "Player"])
-                        else:
-                            player_up = "Done!"
-                        headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
-                        if len(tier_data) > 1:
-                            ping_data = [["-", "", "", "", "", "", ""],
-                                         [player_up, "is up", "", "", "", "",
-                                          "T{} at {}".format(tier_value[1:], event_name)]]
-                        else:
-                            ping_data = [["-", "", "", "", "", "", ""],
-                                         [player_up, "is up", "", "", "", "", event_name]]
-                        player_ping = pd.DataFrame(ping_data, columns=headers)
-                        super_output = total_output.append(player_ping, ignore_index=True)
-                        super_output.to_clipboard(excel=True, index=False)
-                        print(super_output)
-                        if len(tier_data) > 1:
-                            d.update({int(tier_value[1:]): draft_output})
-                            tiered_available_team_list.update({int(tier_value[1:]): available_team_list})
+                        player_up = "Done!"
+                    headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
+                    if len(tier_data) > 1:
+                        ping_data = [["-", "", "", "", "", "", ""],
+                                     [player_up, "is up", "", "", "", "",
+                                      "T{} at {}".format(tier_value[1:], event_name)]]
+                    else:
+                        ping_data = [["-", "", "", "", "", "", ""],
+                                     [player_up, "is up", "", "", "", "", event_name]]
+                    player_ping = pd.DataFrame(ping_data, columns=headers)
+                    super_output = total_output.append(player_ping, ignore_index=True)
+                    super_output.to_clipboard(excel=True, index=False)
+                    print(super_output)
+                    if len(tier_data) > 1:
+                        d.update({int(tier_value[1:]): draft_output})
+                        tiered_available_team_list.update({int(tier_value[1:]): available_team_list})
 
         else:
             print("Invalid Command, please enter more than just tier value")
