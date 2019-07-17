@@ -439,7 +439,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             if commands[0].lower() == "list" or commands[0].lower() == "l":
                 if len(commands) != 2:
                     print("Incorrect formatting, please use list [player name]. Player names are caps sensitive.")
-                    failed = True
+                    super_failed = True
                 else:
                     if commands[1] in players_clean:
                         player_list_location = "{}\{}.txt".format(base_path, commands[1])
@@ -456,7 +456,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         draft_output.at[players_clean.index(commands[1]), "*Status*"] = "*List*"
                     else:
                         print("Invalid player, ensure capitalization is the same.")
-                        failed = True
+                        super_failed = True
 
             if commands[0].lower() == "exit" or commands[0].lower() == "end" or commands[0].lower() == "quit":
                 break
@@ -499,7 +499,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     else:
                         teams_output = available_teams(available_team_list, 1)
                     available_team_list = teams_output[1]
-                    total_output = draft_output.append(teams_output[0], ignore_index=True)
+                    total_output = draft_output.append(teams_output[0])
                     total_output = randoms_visual_update(total_output, random_teams, number_of_players,
                                                          available_team_list)
                     if slot_index is not None:
