@@ -308,10 +308,10 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
     # COMMANDS SECTION
     #TODO Lists don't auto-complete when the first player has a list, and the data has been loaded
     while True:
+        print(number_of_players)
         # Receive input
-        command = input("Enter your command: ")
+        commands = input("Enter your command: ").split(" ")
         valid_command, printed = False, False
-        commands = command.split(" ")
 
         if len(tier_data) > 1:
             tier_value = commands[0]
@@ -502,7 +502,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     else:
                         teams_output = available_teams(available_team_list, 1)
                     available_team_list = teams_output[1]
-                    total_output = draft_output.append(teams_output[0])
+                    total_output = draft_output.append(teams_output[0], ignore_index=True)
                     total_output = randoms_visual_update(total_output, random_teams, number_of_players,
                                                          available_team_list)
                     if slot_index is not None:
