@@ -102,18 +102,11 @@ def swap_index(df, number_of_players, team):
 
 
 def get_team_info(team, available_team_list, mode, teams_clean):
-    trying = True
-    failed = None
-    while trying:
+    for current_team in available_team_list:
         if team in teams_clean:
-            for current_team in available_team_list:
-                if team in current_team and trying is True:
-                    return current_team
-                else:
-                    if failed is None:
-                        failed = True
-        trying = False
-    if failed:
+            if team in current_team:
+                return current_team
+    else:
         return None
 
 
@@ -276,7 +269,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             valid_command = True
             tier_value = None
 
-        failed = False
+        super_failed = False
         if valid_command and len(commands) != 0:  # If tier value exists, or if there are no tiers.
             if slot_index is None:
                 print("Draft is complete, this command is not available.")
@@ -287,7 +280,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     if len(commands) != 2:
                         print("Please check your formatting")
                     else:
-                        failed = None
                         for current_team in available_team_list:
                             if commands[1] in current_team:
                                 if current_team[1] != 0:
@@ -295,12 +287,9 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                     available_team_list.append([current_team[0], (current_team[1] - 1)])
                                     draft_output.at[slot_index[0], slot_index[1]] = commands[1]
                                     draft_output.at[slot_index[0], "*Status*"] = "*Live Picking*"
-                                    failed = False
                                     break
-                            else:
-                                if failed is None:
-                                    failed = True
-                        if failed:
+                        else:
+                            super_failed = True
                             print("Invalid Pick")
             # ======================================SWAP CODE======================================
 
@@ -333,6 +322,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             swap_index1 = swap_index1[0]
                         team1 = get_team_info(commands[1], available_team_list, "drop", teams_clean)
                         team2 = get_team_info(commands[2], available_team_list, "add", teams_clean)
+                        failed = False
                         if team1 is not None:
                             if team2 is not None:
                                 # Decrease
@@ -349,53 +339,13 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                 draft_output.at[swap_index1[0], "*Status*"] = "*Live Picking*"
                             else:
                                 print("{} not available".format(commands[2]))
-                                failed = True
+                                super_failed = True
                         else:
                             print("{} not available".format(commands[1]))
-                            failed = True
+                            super_failed = True
                     else:
+                        super_failed = True
                         print("Doesn't work like this")
-                        # swap_index2 = swap_index(draft_output, number_of_players, commands[2])
-                        # if len(swap_index2) > 1:
-                        #     print("================= Choose the correct slot to swap.. =================")
-                        #     drafter_name_index = {}
-                        #     drafter_slot_index = {}
-                        #     for slot in swap_index2:
-                        #         drafter_name = draft_output.at[slot[0], "Player"]
-                        #         drafter_name_index.update({drafter_name: slot[0]})
-                        #         drafter_slot_index.update({drafter_name: slot[1]})
-                        #         print("{} for {}".format(drafter_name, slot[1]))
-                        #     successful = False
-                        #     while successful is False:
-                        #         input_name = input("Enter the player to recieve the swap: ")
-                        #         try:
-                        #             swap_index2 = [drafter_name_index[input_name], drafter_slot_index[input_name]]
-                        #             successful = True
-                        #         except:
-                        #             print("Please check your player input.")
-                        #
-                        # team1 = get_team_info(commands[1], available_team_list)
-                        # team2 = get_team_info(commands[2], available_team_list)
-                        # if team1 is not None:
-                        #     if team2 is not None:
-                        #         # Decrease
-                        #         if team1[1] != 0:
-                        #             available_team_list.remove(team1)
-                        #             available_team_list.append([team1[0], team1[1] - 1])
-                        #         else:
-                        #             failed = True
-                        #         if team2[1] != 0 and failed is False:
-                        #             # Increase
-                        #             available_team_list.remove(team2)
-                        #             available_team_list.append([team2[0], team2[1] + 1])
-                        #         draft_output.at[swap_index2[0], swap_index2[1]] = commands[2]
-                        #         draft_output.at[slot_index[0], "*Status*"] = "*Live Picking*"
-                        #     else:
-                        #         print("{} not available".format(commands[2]))
-                        #         failed = True
-                        # else:
-                        #     print("{} not available".format(commands[1]))
-                        #     failed = True
             # ======================================RANDOM CODE======================================
 
             if slot_index is None:
@@ -469,7 +419,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     super_output = total_output.append(player_ping, ignore_index=True)
                     print(super_output)
 
-            if failed is False:
+            if super_failed is False:
                 list_active = True
                 while list_active:
                     # Output Results
