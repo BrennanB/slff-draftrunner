@@ -237,6 +237,11 @@ def create_draft(players_clean, tier_data, START_TIME, ROUND_TIMING, base_path, 
                             draft_output = d[tier_index]
                             if player == draft_output.at[index, "Player"]:
                                 draft_output.at[index, "*Status*"] = "*List*"
+                                list_results = check_and_run_lists(tier_data, tier_ratio, available_team_list,
+                                                                   draft_output,
+                                                                   number_of_players, base_path, random_teams)
+                                available_team_list = list_results['available_team_list']
+                                draft_output = list_results['draft_output']
                                 d.update({tier_index: draft_output})
             else:
                 for player in players_clean[(past_i):(i - 1)]:
@@ -258,12 +263,15 @@ def create_draft(players_clean, tier_data, START_TIME, ROUND_TIMING, base_path, 
         tiered_players_clean = None
 
         draft_output = check_saved_lists(base_path, players_clean, number_of_players, draft_output)
-
+        list_results = check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output,
+                                           number_of_players, base_path, random_teams)
+        slot_index = list_results['slot_index']
+        available_team_list = list_results['available_team_list']
+        draft_output = list_results['draft_output']
         teams_output = available_teams(available_team_list, tier_ratio)
         available_team_list = teams_output[1]
         total_output = draft_output.append(teams_output[0], ignore_index=True)
 
-        slot_index = current_slot(total_output, number_of_players)
 
         if OUTPUT_MODE == "CD":
             total_output = randoms_visual_update(total_output, random_teams, number_of_players, available_team_list)
