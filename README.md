@@ -4,7 +4,7 @@
 
 Download most recent python version from https://www.python.org/downloads/
 
-**When installing make sure you select "Add Python x.xx to PATH"**
+__**When installing make sure you select "Add Python x.xx to PATH"**__
 
 On the github page select the green button "Clone or Download" and download as a zip file. Extract your files.
 
