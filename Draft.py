@@ -287,22 +287,19 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     if len(commands) != 2:
                         print("Please check your formatting")
                     else:
-                        trying = True
                         failed = None
-                        while trying:
-                            for current_team in available_team_list:
-                                if commands[1] in current_team and trying is True:
-                                    if current_team[1] != 0:
-                                        available_team_list.remove(current_team)
-                                        available_team_list.append([current_team[0], (current_team[1] - 1)])
-                                        draft_output.at[slot_index[0], slot_index[1]] = commands[1]
-                                        draft_output.at[slot_index[0], "*Status*"] = "*Live Picking*"
-                                        trying = False
-                                        failed = False
-                                else:
-                                    if failed is None:
-                                        failed = True
-                            trying = False
+                        for current_team in available_team_list:
+                            if commands[1] in current_team:
+                                if current_team[1] != 0:
+                                    available_team_list.remove(current_team)
+                                    available_team_list.append([current_team[0], (current_team[1] - 1)])
+                                    draft_output.at[slot_index[0], slot_index[1]] = commands[1]
+                                    draft_output.at[slot_index[0], "*Status*"] = "*Live Picking*"
+                                    failed = False
+                                    break
+                            else:
+                                if failed is None:
+                                    failed = True
                         if failed:
                             print("Invalid Pick")
             # ======================================SWAP CODE======================================
