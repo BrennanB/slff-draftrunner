@@ -310,8 +310,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
     while True:
         # Receive input
         command = input("Enter your command: ")
-        valid_command = False
-        printed = False
+        valid_command, printed = False, False
         commands = command.split(" ")
 
         if len(tier_data) > 1:
@@ -339,12 +338,12 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
 
         super_failed = False
         if valid_command and len(commands) != 0:  # If tier value exists, or if there are no tiers.
-            if slot_index is None:
-                print("Draft is complete, this command is not available.")
-            else:  # Not complete draft
-                # ======================================PICK CODE======================================
 
-                if commands[0].lower() == "pick" or commands[0].lower() == "p":
+            # ======================================PICK CODE======================================
+            if commands[0].lower() == "pick" or commands[0].lower() == "p":
+                if slot_index is None:
+                    print("Draft is complete, this command is not available.")
+                else:  # Not complete draft
                     if len(commands) != 2:
                         print("Please check your formatting")
                     else:
@@ -361,7 +360,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             print("Invalid Pick")
             # ======================================SWAP CODE======================================
 
-            if commands[0].lower() == "swap" or commands[0].lower() == "s":
+            elif commands[0].lower() == "swap" or commands[0].lower() == "s":
 
                 if len(commands) != 3:  # Check to make sure all commands exist
                     print("Incorrect formatting! Please format like: swap [swap out team] [swapped in team]")
@@ -416,10 +415,10 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         print("Doesn't work like this")
             # ======================================RANDOM CODE======================================
 
-            if slot_index is None:
-                print("Draft is complete, this command is not available.")
-            else:  # Not complete draft
-                if commands[0].lower() == "random" or commands[0].lower() == "r":
+            elif commands[0].lower() == "random" or commands[0].lower() == "r":
+                if slot_index is None:
+                    print("Draft is complete, this command is not available.")
+                else:  # Not complete draft
                     trying = True
                     for random_team in random_teams:
                         for available_team in available_team_list:
@@ -436,7 +435,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                 trying = False
 
             # ======================================LIST SETUP CODE======================================
-            if commands[0].lower() == "list" or commands[0].lower() == "l":
+            elif commands[0].lower() == "list" or commands[0].lower() == "l":
                 if len(commands) != 2:
                     print("Incorrect formatting, please use list [player name]. Player names are caps sensitive.")
                     super_failed = True
@@ -458,10 +457,10 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         print("Invalid player, ensure capitalization is the same.")
                         super_failed = True
 
-            if commands[0].lower() == "exit" or commands[0].lower() == "end" or commands[0].lower() == "quit":
+            elif commands[0].lower() == "exit" or commands[0].lower() == "end" or commands[0].lower() == "quit":
                 break
 
-            if commands[0].lower() == "print":
+            elif commands[0].lower() == "print":
                 if OUTPUT_MODE == "CD":
                     if len(tier_data) == 1:
                         teams_output = available_teams(available_team_list, tier_ratio)
@@ -486,6 +485,10 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     player_ping = pd.DataFrame(ping_data, columns=headers)
                     super_output = total_output.append(player_ping, ignore_index=True)
                     print(super_output)
+
+            else:
+                super_failed = True
+                print("{} is not a valid command".format(commands[0]))
 
             if super_failed is False:
                 list_results = check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output,
