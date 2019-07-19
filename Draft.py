@@ -387,7 +387,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         if swap_index2 is not None:
                             '''Both teams are picked'''
                             #TODO Add player team swap compatibility for multiple team drafts
-                            
+
                             if len(swap_index1) > 1:
                                 pass
                             else:
@@ -398,13 +398,13 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                 pass
 
                             if len(swap_index1) == 1 and len(swap_index2) == 1:
-                                print(swap_index1)
-                                print(swap_index2)
-                                print(commands)
                                 draft_output.at[swap_index1[0][0], swap_index1[0][1]] = commands[2]
                                 draft_output.at[swap_index1[0][0], "*Status*"] = "*Live Picking*"
                                 draft_output.at[swap_index2[0][0], swap_index2[0][1]] = commands[1]
                                 draft_output.at[swap_index2[0][0], "*Status*"] = "*Live Picking*"
+                            else:
+                                print("This functionality isn't available right now. Please swap using a different method")
+                                super_failed = True
                         else:
                             if len(swap_index1) > 1:
                                 swap_index1 = determine_swap_player(swap_index1, draft_output)
