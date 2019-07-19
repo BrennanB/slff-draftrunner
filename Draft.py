@@ -143,6 +143,23 @@ def check_saved_lists(base_path, players_clean, number_of_players, draft_output)
     return draft_output
 
 
+def determine_swap_player(swap_index, draft_output):
+    print("================= Choose the correct slot to swap.. =================")
+    drafter_name_index = {}
+    drafter_slot_index = {}
+    for slot in swap_index:
+        drafter_name = draft_output.at[slot[0], "Player"]
+        drafter_name_index.update({drafter_name: slot[0]})
+        drafter_slot_index.update({drafter_name: slot[1]})
+        print("{} for {}".format(drafter_name, slot[1]))
+    successful = False
+    while successful is False:
+        input_name = input("Enter the player to recieve the swap: ")
+        try:
+            return [drafter_name_index[input_name], drafter_slot_index[input_name]]
+        except:
+            print("Please check your player input.")
+
 def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output, number_of_players, base_path, random_teams):
     list_active = True
     while list_active:
@@ -338,7 +355,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
 
         super_failed = False
         if valid_command and len(commands) != 0:  # If tier value exists, or if there are no tiers.
-
             # ======================================PICK CODE======================================
             if commands[0].lower() == "pick" or commands[0].lower() == "p":
                 if slot_index is None:
@@ -366,50 +382,57 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     print("Incorrect formatting! Please format like: swap [swap out team] [swapped in team]")
                 else:
                     swap_index1 = swap_index(draft_output, number_of_players, commands[1])
-                    print(swap_index1)
+                    swap_index2 = swap_index(draft_output, number_of_players, commands[2])
                     if swap_index1 is not None:  # Did it find team at commands 2?
-                        if len(swap_index1) > 1:
-                            print("================= Choose the correct slot to swap.. =================")
-                            drafter_name_index = {}
-                            drafter_slot_index = {}
-                            for slot in swap_index1:
-                                drafter_name = draft_output.at[slot[0], "Player"]
-                                drafter_name_index.update({drafter_name: slot[0]})
-                                drafter_slot_index.update({drafter_name: slot[1]})
-                                print("{} for {}".format(drafter_name, slot[1]))
-                            successful = False
-                            while successful is False:
-                                input_name = input("Enter the player to recieve the swap: ")
-                                try:
-                                    swap_index1 = [drafter_name_index[input_name], drafter_slot_index[input_name]]
-                                    successful = True
-                                except:
-                                    print("Please check your player input.")
-                        else:
-                            swap_index1 = swap_index1[0]
-                        team1 = get_team_info(commands[1], available_team_list, "drop", teams_clean)
-                        team2 = get_team_info(commands[2], available_team_list, "add", teams_clean)
-                        failed = False
-                        if team1 is not None:
-                            if team2 is not None:
-                                # Decrease
-                                if team2[1] != 0:
-                                    available_team_list.remove(team2)
-                                    available_team_list.append([team2[0], team2[1] - 1])
-                                else:
-                                    failed = True
-                                if failed is False:
-                                    # Increase
-                                    available_team_list.remove(team1)
-                                    available_team_list.append([team1[0], team1[1] + 1])
-                                draft_output.at[swap_index1[0], swap_index1[1]] = commands[2]
-                                draft_output.at[swap_index1[0], "*Status*"] = "*Live Picking*"
+                        if swap_index2 is not None:
+                            '''Both teams are picked'''
+                            #TODO Add player team swap compatibility for multiple team drafts
+                            
+                            if len(swap_index1) > 1:
+                                pass
                             else:
-                                print("{} not available".format(commands[2]))
-                                super_failed = True
+                                pass
+                            if len(swap_index2) > 1:
+                                pass
+                            else:
+                                pass
+
+                            if len(swap_index1) == 1 and len(swap_index2) == 1:
+                                print(swap_index1)
+                                print(swap_index2)
+                                print(commands)
+                                draft_output.at[swap_index1[0][0], swap_index1[0][1]] = commands[2]
+                                draft_output.at[swap_index1[0][0], "*Status*"] = "*Live Picking*"
+                                draft_output.at[swap_index2[0][0], swap_index2[0][1]] = commands[1]
+                                draft_output.at[swap_index2[0][0], "*Status*"] = "*Live Picking*"
                         else:
-                            print("{} not available".format(commands[1]))
-                            super_failed = True
+                            if len(swap_index1) > 1:
+                                swap_index1 = determine_swap_player(swap_index1, draft_output)
+                            else:
+                                swap_index1 = swap_index1[0]
+                            team1 = get_team_info(commands[1], available_team_list, "drop", teams_clean)
+                            team2 = get_team_info(commands[2], available_team_list, "add", teams_clean)
+                            failed = False
+                            if team1 is not None:
+                                if team2 is not None:
+                                    # Decrease
+                                    if team2[1] != 0:
+                                        available_team_list.remove(team2)
+                                        available_team_list.append([team2[0], team2[1] - 1])
+                                    else:
+                                        failed = True
+                                    if failed is False:
+                                        # Increase
+                                        available_team_list.remove(team1)
+                                        available_team_list.append([team1[0], team1[1] + 1])
+                                    draft_output.at[swap_index1[0], swap_index1[1]] = commands[2]
+                                    draft_output.at[swap_index1[0], "*Status*"] = "*Live Picking*"
+                                else:
+                                    print("{} not available".format(commands[2]))
+                                    super_failed = True
+                            else:
+                                print("{} not available".format(commands[1]))
+                                super_failed = True
                     else:
                         super_failed = True
                         print("Doesn't work like this")
