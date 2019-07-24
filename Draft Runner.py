@@ -9,7 +9,8 @@ import secrets
 client = DiscourseClient('http://chiefdelphi.com', api_username=secrets.DISCOURSE_USERNAME, api_key=secrets.DISCOURSE_KEY)
 
 user = client.user('BrennanB')
-print(user)
+client.send_pm('BrennanB', "Test PM", "This is a test message")
+# print(user)
 
 # SETTINGS
 
