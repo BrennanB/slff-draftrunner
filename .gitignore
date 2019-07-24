@@ -1,6 +1,8 @@
 venv/
 .idea/
+secrets.py
 
 *.pyc
 *.xml
 *.iml
+secrets.py

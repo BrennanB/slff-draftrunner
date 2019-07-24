@@ -2,7 +2,14 @@ import random
 import os
 import json
 import math
-import Draft
+import draft
+from discourse import DiscourseClient
+import secrets
+
+client = DiscourseClient('http://chiefdelphi.com', api_username=secrets.DISCOURSE_USERNAME, api_key=secrets.DISCOURSE_KEY)
+
+user = client.user('BrennanB')
+print(user)
 
 # SETTINGS
 
@@ -114,5 +121,5 @@ if TIERS:
 else:
     tier_data = [len(players_clean)]
 print(tier_data)
-Draft.run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
+draft.run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM_ORDER, OUTPUT_MODE, players_clean,
                 available_team_list, random_teams, teams_clean, event_name)
