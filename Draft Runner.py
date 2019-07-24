@@ -19,7 +19,6 @@ TIERS = True
 def get_tier_sizes(num_players, num_teams, num_picks=3):
     tiers = math.ceil(num_players / math.floor(num_teams / num_picks))
     current_size = math.floor(num_players / tiers)
-
     tier_sizes = []
 
     while num_players > current_size:
@@ -27,9 +26,7 @@ def get_tier_sizes(num_players, num_teams, num_picks=3):
         num_players -= current_size
         tiers -= 1
         current_size = math.floor(num_players / tiers)
-
     tier_sizes.append(num_players)
-
     return tier_sizes
 
 
