@@ -1,5 +1,7 @@
 # slff-draftrunner
 
+## For the manual version please look at the manual-runner branch
+
 ## Setup
 
 Download most recent python version from https://www.python.org/downloads/
