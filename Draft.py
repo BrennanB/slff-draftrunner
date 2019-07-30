@@ -506,6 +506,7 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                      [player_up, "is up", "", "", "", "", event_name]]
                     player_ping = pd.DataFrame(ping_data, columns=headers)
                     super_output = total_output.append(player_ping, ignore_index=True)
+                    super_output.to_clipboard(excel=True, index=False)
                     print(super_output)
 
             else:
