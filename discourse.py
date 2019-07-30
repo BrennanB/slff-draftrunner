@@ -22,9 +22,14 @@ class DiscourseClient(object):
             "target_usernames": username,
             "archetype": "private_message"
         }
-        response = requests.post('{}/posts.json'.format(self.host), json=post, auth=(self.api_username, self.api_key))
+
+        r = requests.get(self.host, params={"api_username": self.api_username, "api_key": self.api_key})
+        SESSION_COOKIE = r.cookies
+        print(SESSION_COOKIE)
+
+        response = requests.post('{}/posts'.format(self.host), data=post, params={"api_username": self.api_username, "api_key": self.api_key}, cookies=SESSION_COOKIE, headers={"Accept": "application/json; charset=utf-8"})
         print(response.status_code)
-        print(response.content)
+        print(response.links)
 
     def _get(self, path):
         response = requests.get('{}{}'.format(self.host, path), auth=(self.api_username, self.api_key))

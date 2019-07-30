@@ -6,7 +6,7 @@ import draft
 from discourse import DiscourseClient
 import secrets
 
-client = DiscourseClient('http://chiefdelphi.com', api_username=secrets.DISCOURSE_USERNAME, api_key=secrets.DISCOURSE_KEY)
+client = DiscourseClient('https://chiefdelphi.com', api_username=secrets.DISCOURSE_USERNAME, api_key=secrets.DISCOURSE_KEY)
 
 user = client.user('BrennanB')
 client.send_pm('BrennanB', "Test PM", "This is a test message")
