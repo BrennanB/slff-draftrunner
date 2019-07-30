@@ -325,7 +325,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
     # COMMANDS SECTION
     #TODO Lists don't auto-complete when the first player has a list, and the data has been loaded
     while True:
-        print(number_of_players)
         # Receive input
         commands = input("Enter your command: ").split(" ")
         valid_command, printed = False, False
