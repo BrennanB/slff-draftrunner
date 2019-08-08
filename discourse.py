@@ -9,29 +9,36 @@ class DiscourseClient(object):
         self.api_key = api_key
 
     def user(self, username):
-        print("Getting user data")
         return self._get("/users/{0}.json".format(username))
 
     def send_pm(self, username, title, content):
-        print("Sending PM")
         post = {
             "title": title,
-            "topic_id": 0,
             "raw": content,
-            "category": 0,
             "target_usernames": username,
             "archetype": "private_message"
         }
 
-        r = requests.get(self.host, params={"api_username": self.api_username, "api_key": self.api_key})
-        SESSION_COOKIE = r.cookies
-        print(SESSION_COOKIE)
+        response = requests.post('{}/posts?api_key={}&api_username={}'.format(self.host, self.api_key, self.api_username),
+                                 json=post, headers={"Content-Type": "application/x-www-form-urlencoded;"})
 
-        response = requests.post('{}/posts'.format(self.host), data=post, params={"api_username": self.api_username, "api_key": self.api_key}, cookies=SESSION_COOKIE, headers={"Accept": "application/json; charset=utf-8"})
-        print(response.status_code)
-        print(response.links)
+        return response
+
+    def read_pm(self, pm_id=None):
+        if pm_id is None:
+            raise Exception("Must include pm_id.")
+        pm_data = self.get_topic(pm_id)
+        cleaned_posts = []
+        for post in pm_data['post_stream']['posts']:
+            del post['avatar_template']
+            cleaned_posts.append(post)
+        return cleaned_posts
+
+    def get_topic(self, topic_id=None):
+        if topic_id is None:
+            raise Exception("Must include topic_id.")
+        return self._get("/t/{0}.json".format(topic_id))
 
     def _get(self, path):
-        response = requests.get('{}{}'.format(self.host, path), auth=(self.api_username, self.api_key))
-        print(response.status_code)
+        response = requests.get('{}{}?api_key={}&api_username={}'.format(self.host, path, self.api_key, self.api_username))
         return response.json()

@@ -3,14 +3,14 @@ import os
 import json
 import math
 import draft
-from discourse import DiscourseClient
-import secrets
+from discourse import DiscourseClient as DC
+import dr_secrets
+import re
+import bs4
 
-client = DiscourseClient('https://chiefdelphi.com', api_username=secrets.DISCOURSE_USERNAME, api_key=secrets.DISCOURSE_KEY)
 
-user = client.user('BrennanB')
-client.send_pm('BrennanB', "Test PM", "This is a test message")
-# print(user)
+client = DC('https://www.chiefdelphi.com/', api_username=dr_secrets.DISCOURSE_USERNAME, api_key=dr_secrets.DISCOURSE_KEY)
+
 
 # SETTINGS
 
@@ -22,6 +22,19 @@ RANDOM_ORDER = True
 TIERS = True
 
 # TODO Add a rookie random function
+
+
+def list_from_cd_pm(pm_id):
+    d = client.read_pm(pm_id)[0]
+    raw_html = d['cooked']
+    cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
+    cleantext = re.sub(cleanr, '', raw_html)
+    clean_data = {"cd_username": d['username'],
+                         "cd_user_id": d['id'],
+                         "content": cleantext,
+                         "event_name": d['topic_slug']}
+    with open("{}.txt".format(clean_data['cd_username']), 'w') as outfile:
+        outfile.write(clean_data['content'])
 
 
 def get_tier_sizes(num_players, num_teams, num_picks=3):
@@ -36,6 +49,8 @@ def get_tier_sizes(num_players, num_teams, num_picks=3):
         current_size = math.floor(num_players / tiers)
     tier_sizes.append(num_players)
     return tier_sizes
+
+pm_data = list_from_cd_pm(361209)
 
 
 # CREATE DIRECTORY
