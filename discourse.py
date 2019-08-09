@@ -24,6 +24,10 @@ class DiscourseClient(object):
 
         return response
 
+    def get_pms(self, username):
+
+        return self._get("/topics/private-messages/{0}.json".format(username))
+
     def read_pm(self, pm_id=None):
         if pm_id is None:
             raise Exception("Must include pm_id.")

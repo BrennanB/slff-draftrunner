@@ -24,7 +24,7 @@ TIERS = True
 # TODO Add a rookie random function
 
 
-def list_from_cd_pm(pm_id):
+def list_from_cd_pm(pm_id, event):
     d = client.read_pm(pm_id)[0]
     raw_html = d['cooked']
     cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
@@ -33,8 +33,18 @@ def list_from_cd_pm(pm_id):
                          "cd_user_id": d['id'],
                          "content": cleantext,
                          "event_name": d['topic_slug']}
-    with open("{}.txt".format(clean_data['cd_username']), 'w') as outfile:
+    with open("{}/{}/{}.txt".format(SAVE_DIR, event, clean_data['cd_username']), 'w') as outfile:
         outfile.write(clean_data['content'])
+
+
+def check_for_lists():
+    private_messages = client.get_pms("fantasy_first_bot")
+    pm_ids = {}
+    for pm in private_messages['topic_list']['topics']:
+        if os.path.exists("{}/{}".format(SAVE_DIR, pm['title'])):
+            pm_ids.update({pm['title']: pm['id']})
+            list_from_cd_pm(pm['id'], pm['title'])
+    return pm_ids
 
 
 def get_tier_sizes(num_players, num_teams, num_picks=3):
@@ -50,7 +60,7 @@ def get_tier_sizes(num_players, num_teams, num_picks=3):
     tier_sizes.append(num_players)
     return tier_sizes
 
-pm_data = list_from_cd_pm(361209)
+print(check_for_lists())
 
 
 # CREATE DIRECTORY

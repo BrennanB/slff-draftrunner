@@ -6,3 +6,4 @@ secrets.py
 *.xml
 *.iml
 secrets.py
+dr_secrets.py
