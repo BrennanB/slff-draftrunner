@@ -19,7 +19,7 @@ START_TIME = [8, 0]
 SAVE_DIR = r"E:\_Python Projects\Draft Runner Data"
 OUTPUT_MODE = "CD"
 RANDOM_ORDER = True
-TIERS = False
+TIERS = True
 
 # TODO Add a rookie random function
 
@@ -46,6 +46,10 @@ def check_for_lists():
                 client.send_pm(id=pm['id'], content="Received your list successfully!", username=pm['last_poster_username'])
             pm_ids.update({pm['title']: pm['id']})
             list_from_cd_pm(pm['id'], pm['title'])
+        else:
+            if pm['last_poster_username'] != "fantasy_first_bot":
+                client.send_pm(id=pm['id'], content="Sorry, *{}* doesn't seem to exist in my database of available events to draft.".format(pm['title']),
+                               username=pm['last_poster_username'])
     return pm_ids
 
 
@@ -62,8 +66,8 @@ def get_tier_sizes(num_players, num_teams, num_picks=3):
     tier_sizes.append(num_players)
     return tier_sizes
 
-print(check_for_lists())
 
+print("Found {} lists for events".format(len(check_for_lists())))
 
 # CREATE DIRECTORY
 start_draft = True
