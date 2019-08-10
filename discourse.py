@@ -11,16 +11,19 @@ class DiscourseClient(object):
     def user(self, username):
         return self._get("/users/{0}.json".format(username))
 
-    def send_pm(self, username, title, content):
-        post = {
-            "title": title,
-            "raw": content,
-            "target_usernames": username,
-            "archetype": "private_message"
-        }
+    def send_pm(self, username=None, title=None, content="Default Message", id=None):
+        post = {}
+        if title is not None:
+            post.update({"title": title})
+        if id is not None:
+            post.update({"topic_id": id})
+        post.update({"raw": content})
+        if username is not None:
+            post.update({"target_usernames": username})
+        post.update({"archetype": "private_message"})
 
         response = requests.post('{}/posts?api_key={}&api_username={}'.format(self.host, self.api_key, self.api_username),
-                                 json=post, headers={"Content-Type": "application/x-www-form-urlencoded;"})
+                                 data=post, headers={"Content-Type": "application/x-www-form-urlencoded;"})
 
         return response
 

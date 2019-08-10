@@ -19,7 +19,7 @@ START_TIME = [8, 0]
 SAVE_DIR = r"E:\_Python Projects\Draft Runner Data"
 OUTPUT_MODE = "CD"
 RANDOM_ORDER = True
-TIERS = True
+TIERS = False
 
 # TODO Add a rookie random function
 
@@ -42,6 +42,8 @@ def check_for_lists():
     pm_ids = {}
     for pm in private_messages['topic_list']['topics']:
         if os.path.exists("{}/{}".format(SAVE_DIR, pm['title'])):
+            if pm['last_poster_username'] != "fantasy_first_bot":
+                client.send_pm(id=pm['id'], content="Received your list successfully!", username=pm['last_poster_username'])
             pm_ids.update({pm['title']: pm['id']})
             list_from_cd_pm(pm['id'], pm['title'])
     return pm_ids
