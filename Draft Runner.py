@@ -7,6 +7,7 @@ from discourse import DiscourseClient as DC
 import dr_secrets
 import re
 import bs4
+import templates
 
 
 client = DC('https://www.chiefdelphi.com/', api_username=dr_secrets.DISCOURSE_USERNAME, api_key=dr_secrets.DISCOURSE_KEY)
@@ -20,6 +21,7 @@ SAVE_DIR = r"E:\_Python Projects\Draft Runner Data"
 OUTPUT_MODE = "CD"
 RANDOM_ORDER = True
 TIERS = True
+YEAR = 2019
 
 # TODO Add a rookie random function
 
@@ -116,6 +118,11 @@ if loading is True:
 else:
     # INITIALIZE DRAFT SETTINGS
 
+    event_full_name = input("What is the full name for your Event?: ")
+    start_date = input("What is the start date for your event? (YYYY-MM-DD): ")
+    start_time = input("What is the start time for your event? (24 hr time HH:MM:SS): ")
+    close_date = input("What is the close date for your event? (YYYY-MM-DD): ")
+    close_time = input("What is the close time for your event? (24 hr time HH:MM:SS): ")
     # Input Players
     f = open(players_input, "w")
     f.close()
@@ -135,7 +142,12 @@ else:
     df = os.system("notepad.exe {}".format(teams_input))
     f = open(teams_input, "r")
     teams = f.readlines()
+    team_list = "".join(teams)
     teams_clean = [x.replace('\n', '') for x in teams]
+
+    body_text = templates.new_draft(start_date, start_time, close_date, close_time, team_list, event_name)
+
+    client.new_post(title="[OFF] {}".format(event_full_name), content=body_text)
 
     random_teams = [x.replace('\n', '') for x in teams]
     random.shuffle(random_teams)
