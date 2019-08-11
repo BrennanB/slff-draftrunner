@@ -185,7 +185,7 @@ def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output
                 for player_team in player_list_teams_clean:
                     for available_team in available_team_list:
                         if available_team[0] == player_team.upper() and trying is True and available_team[1] != 0:
-                            draft_output.at[slot_index[0], slot_index[1]] = player_team
+                            draft_output.at[slot_index[0], slot_index[1]] = player_team.upper()
                             available_team_list.remove(available_team)
                             available_team_list.append([available_team[0], available_team[1] - 1])
                             trying = False
