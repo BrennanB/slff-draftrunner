@@ -67,12 +67,22 @@ def get_tier_sizes(num_players, num_teams, num_picks=3):
     return tier_sizes
 
 
+def get_signups(post_id):
+    likes = client.get_likes(post_id)
+    players = {}
+    for like in likes['post_action_users']:
+        players.update({like['username']: like['id']})
+    return players
+
+
 print("Found {} lists for events".format(len(check_for_lists())))
+
+print(get_signups(2234548))
 
 # CREATE DIRECTORY
 start_draft = True
 while start_draft is True:
-    event_name = input("What is your Event Name?: ")
+    event_name = input("What is the shortname for your Event?: ")
     if "'" in event_name:
         print("The character ' is not permitted in event names")
     else:

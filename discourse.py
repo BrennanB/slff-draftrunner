@@ -7,6 +7,8 @@ class DiscourseClient(object):
         self.host = host
         self.api_username = api_username
         self.api_key = api_key
+        self.params = {'api_key': api_key, "api_username": api_username}
+        self.headers = {"Accept": "application/json; charset=utf-8"}
 
     def user(self, username):
         return self._get("/users/{0}.json".format(username))
@@ -27,8 +29,10 @@ class DiscourseClient(object):
 
         return response
 
-    def get_pms(self, username):
+    def get_likes(self, id):
+        return self._get("/post_action_users?id={}&post_action_type_id=2".format(id))
 
+    def get_pms(self, username):
         return self._get("/topics/private-messages/{0}.json".format(username))
 
     def read_pm(self, pm_id=None):
@@ -47,5 +51,5 @@ class DiscourseClient(object):
         return self._get("/t/{0}.json".format(topic_id))
 
     def _get(self, path):
-        response = requests.get('{}{}?api_key={}&api_username={}'.format(self.host, path, self.api_key, self.api_username))
+        response = requests.get('{}{}?api_key={}&api_username={}'.format(self.host, path, self.api_key, self.api_username), headers=self.headers)
         return response.json()
