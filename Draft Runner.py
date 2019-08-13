@@ -39,18 +39,21 @@ def list_from_cd_pm(pm_id, event):
         outfile.write(clean_data['content'])
 
 
+#TODO For some reason it misses some lists randomly
+#Looks like some rate limiting issue. Investigate response errors/codes
 def check_for_lists():
     private_messages = client.get_pms("fantasy_first_bot")
-    print(private_messages)
     pm_ids = {}
     for pm in private_messages['topic_list']['topics']:
+        print(pm)
         if os.path.exists("{}/{}".format(SAVE_DIR, pm['title'])):
             if pm['last_poster_username'] != "fantasy_first_bot" and pm['last_poster_username'] != "discobot":
+                print("Sending response to {}".format(pm['last_poster_username']))
                 client.send_pm(id=pm['id'], content="Received your list successfully!", username=pm['last_poster_username'])
             pm_ids.update({pm['title']: pm['id']})
             list_from_cd_pm(pm['id'], pm['title'])
         else:
-            if pm['last_poster_username'] != "fantasy_first_bot":
+            if pm['last_poster_username'] != "fantasy_first_bot" and pm['last_poster_username'] != "discobot":
                 client.send_pm(id=pm['id'], content="Sorry, *{}* doesn't seem to exist in my database of available events to draft.".format(pm['title']),
                                username=pm['last_poster_username'])
     return pm_ids
@@ -80,7 +83,7 @@ def get_signups(post_id):
 
 print("Found {} lists for events".format(len(check_for_lists())))
 
-print(get_signups(2234548))
+
 
 # CREATE DIRECTORY
 start_draft = True
@@ -109,9 +112,27 @@ teams_data_location = "{}\Teams.json".format(base_path)
 random_list_location = "{}\Randoms.json".format(base_path)
 
 if loading is True:
-    print("Loaded data")
-    with open(players_data_location) as json_file:
-        players_clean = json.load(json_file)
+    print("Loading data")
+    bad_response = True
+    while bad_response is True:
+        correct_prompt = input("Re-update players? [Y/N]: ")
+        if correct_prompt.lower() == "y":
+            draft_signups = get_signups(2236561)
+            players_clean = []
+            for player in draft_signups.keys():
+                players_clean.append(player)
+            if RANDOM_ORDER:  # If random order setting is activated.
+                random.shuffle(players_clean)
+            with open(players_data_location, 'w') as outfile:
+                json.dump(players_clean, outfile)
+
+            bad_response = False
+        elif correct_prompt.lower() == "n":
+            with open(players_data_location) as json_file:
+                players_clean = json.load(json_file)
+            bad_response = False
+        else:
+            print("Invalid response!")
     with open(teams_data_location) as json_file:
         teams_clean = json.load(json_file)
     with open(random_list_location) as json_file:
