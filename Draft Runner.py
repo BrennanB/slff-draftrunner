@@ -41,10 +41,11 @@ def list_from_cd_pm(pm_id, event):
 
 def check_for_lists():
     private_messages = client.get_pms("fantasy_first_bot")
+    print(private_messages)
     pm_ids = {}
     for pm in private_messages['topic_list']['topics']:
         if os.path.exists("{}/{}".format(SAVE_DIR, pm['title'])):
-            if pm['last_poster_username'] != "fantasy_first_bot":
+            if pm['last_poster_username'] != "fantasy_first_bot" and pm['last_poster_username'] != "discobot":
                 client.send_pm(id=pm['id'], content="Received your list successfully!", username=pm['last_poster_username'])
             pm_ids.update({pm['title']: pm['id']})
             list_from_cd_pm(pm['id'], pm['title'])
