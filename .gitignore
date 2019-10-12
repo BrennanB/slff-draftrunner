@@ -4,3 +4,4 @@ venv/
 *.pyc
 *.xml
 *.iml
+dr_secrets.py
