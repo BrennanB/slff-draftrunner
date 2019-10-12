@@ -11,11 +11,20 @@ On the github page select the green button "Clone or Download" and download as a
 
 Open your command line. For windows press Windows+R to open “Run” box. Type “cmd” and then click “OK” to open. In cmd type "pip install pandas" Leave it to run till successful messages appear.
 
-Create a folder for where you would like the draft data to be saved. Copy the location of that folder. If you move this folder, you will have to re-update this location. 
-
-Right click "Draftrunner.py" and edit with IDLE or your preferred text editor. Edit the variable "SAVE_DIR" to your new location and save.
-
 You are now able to run the draft runner.
+
+## Editing Settings
+
+Right click "Settings.py" and edit with IDLE or your preferred text editor. Edit the variables as required.
+
+### Settings Explanations
+
+ROUND_TIMING - Each round in number of minutes
+START TIME - [Hour starttime, minute starttime]
+SAVE_DIR - Optional location for saving draft data
+OUTPUT_MODE - Currently only works as "CD"
+RANDOM_ORDER - True = Player order is randomized on draft creation, False = Order the teams are placed in during creation is maintained
+TIERS = TRUE = If number of picks exceed number of pickable teams tiers will be created, FALSE = If number of picks exceed number of pickable teams duplicates of teams will be created.
 
 ## Updating
 
