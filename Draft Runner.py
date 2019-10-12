@@ -3,15 +3,16 @@ import os
 import json
 import math
 import Draft
+import Settings
 
-# SETTINGS
+ROUND_TIMING = Settings.ROUND_TIMING
+START_TIME = Settings.START_TIME
+SAVE_DIR = Settings.SAVE_DIR
+OUTPUT_MODE = Settings.OUTPUT_MODE
+RANDOM_ORDER = Settings.RANDOM_ORDER
+TIERS = Settings.TIERS
 
-ROUND_TIMING = [2, 2, 2]
-START_TIME = [8, 0]
-SAVE_DIR = r"E:\_Python Projects\Draft Runner Data"
-OUTPUT_MODE = "CD"
-RANDOM_ORDER = True
-TIERS = True
+
 
 # TODO Add a rookie random function
 
