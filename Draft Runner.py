@@ -12,6 +12,13 @@ OUTPUT_MODE = Settings.OUTPUT_MODE
 RANDOM_ORDER = Settings.RANDOM_ORDER
 TIERS = Settings.TIERS
 
+if SAVE_DIR is None:
+    CURRENT_DIR = os.getcwd()
+    SAVE_DIR = f"{CURRENT_DIR}\\Draft Runner Data"
+    if not os.path.isdir(SAVE_DIR):
+        os.mkdir(SAVE_DIR)
+    print(SAVE_DIR)
+
 
 # TODO Add a rookie random function
 
