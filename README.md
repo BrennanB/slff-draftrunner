@@ -19,17 +19,17 @@ Right click "Settings.py" and edit with IDLE or your preferred text editor. Edit
 
 ### Settings Explanations
 
-ROUND_TIMING - Each round in number of minutes
+**ROUND_TIMING** - Each round in number of minutes
 
-START TIME - [Hour starttime, minute starttime]
+**START TIME** - [Hour starttime, minute starttime]
 
-SAVE_DIR - Optional location for saving draft data
+**SAVE_DIR** - Optional location for saving draft data
 
-OUTPUT_MODE - Currently only works as "CD"
+**OUTPUT_MODE** - Currently only works as "CD"
 
-RANDOM_ORDER - True = Player order is randomized on draft creation, False = Order the teams are placed in during creation is maintained
+**RANDOM_ORDER** - True = Player order is randomized on draft creation, False = Order the teams are placed in during creation is maintained
 
-TIERS = TRUE = If number of picks exceed number of pickable teams tiers will be created, FALSE = If number of picks exceed number of pickable teams duplicates of teams will be created.
+**TIERS** - TRUE = If number of picks exceed number of pickable teams tiers will be created, FALSE = If number of picks exceed number of pickable teams duplicates of teams will be created.
 
 ## Updating
 
