@@ -13,12 +13,11 @@ RANDOM_ORDER = Settings.RANDOM_ORDER
 TIERS = Settings.TIERS
 
 
-
 # TODO Add a rookie random function
 
 
 def get_tier_sizes(num_players, num_teams, num_picks=3):
-    tiers = math.ceil(num_players / math.floor(num_teams / num_picks))
+    tiers = math.ceil((num_players + 1) / math.floor(num_teams / num_picks))
     current_size = math.floor(num_players / tiers)
     tier_sizes = []
 
