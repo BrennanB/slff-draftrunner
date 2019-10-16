@@ -509,6 +509,23 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     super_output.to_clipboard(excel=True, index=False)
                     print(super_output)
 
+            elif commands[0].lower() == "delay":
+                # Delay draft by x minutes
+                if len(commands) != 2 or int(commands[1]) > 60:
+                    print("Please use the command with a delay in minutes, make sure you don't delay more than 60minutes.")
+                    super_failed = True
+                else:
+                    local_num_players = len(draft_output.index)
+                    for index in range(0, local_num_players):
+                        for column in ["Team 1", "Team 2", "Team 3"]:
+                            try:
+                                current_time = draft_output.at[index, column]
+                                current_time = [int(x) for x in current_time.split(":")]
+                                new_base_time = time_math(current_time[0], current_time[1], 1, int(commands[1]))
+                                draft_output.at[index, column] = new_base_time[0]
+                            except:
+                                pass
+
             else:
                 super_failed = True
                 print("{} is not a valid command".format(commands[0]))
