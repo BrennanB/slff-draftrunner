@@ -535,6 +535,15 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                 draft_output.at[index, column] = new_base_time[0]
                             except:
                                 pass
+            elif commands[0].lower() == "remaining":
+                print(available_team_list)
+                remaining_teams = ""
+                for team_data in available_team_list:
+                    for i in range(0, team_data[1]):
+                        remaining_teams += "{}\n".format(team_data[0])
+
+                print(remaining_teams)
+                super_failed = True
 
             else:
                 super_failed = True
