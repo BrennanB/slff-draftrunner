@@ -37,7 +37,7 @@ Re-download the ZIP file from Github, and update your save directory.
 
 ## Running a draft
 
-Run "Draft Runner.py" file
+Run "Draft Runner.py" file. Any commands you run, will auto copy the latest version of the draft to your clipboard. No need to copy the data. A preview will be shown of the draft and it's status, and all you need to do is verify the command ran, and then post the result into Chief Delphi
 
 ### Commands
 
@@ -51,7 +51,7 @@ Selects a team for the active slot.
 
 Is case sensitive. Opens a text file for lists to be inputted.
 
-#### random (p)
+#### random (r)
 
 Randoms current slot
 
@@ -62,6 +62,10 @@ Swaps the two teams, will ask for clarification if multiple instances of the sub
 #### print
 
 Outputs current draft status.
+
+#### delay [time delay minutes 1-59]
+
+Delays the draft from 1-59 minutes. To delay more, run command multiple times.
 
 #### exit/end/quit
 
