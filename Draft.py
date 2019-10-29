@@ -499,11 +499,21 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         player_up = "Done!"
                     headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
                     if len(tier_data) > 1:
-                        ping_data = [["-", "", "", "", "", "", ""],
-                                     [player_up, "is up", "", "", "", "", "T{} at {}".format(tier_value[1:],event_name)]]
+                        if player_up != "Done!":
+                            ping_data = [["-", "", "", "", "", "", ""],
+                                         [player_up, "is up", "", "", "", "",
+                                          "T{} at {}".format(tier_value[1:], event_name)]]
+                        else:
+                            ping_data = [["-", "", "", "", "", "", ""],
+                                         [player_up, "", "", "", "", "",
+                                          "T{} at {}".format(tier_value[1:], event_name)]]
                     else:
-                        ping_data = [["-", "", "", "", "", "", ""],
+                        if player_up != "Done!":
+                            ping_data = [["-", "", "", "", "", "", ""],
                                      [player_up, "is up", "", "", "", "", event_name]]
+                        else:
+                            ping_data = [["-", "", "", "", "", "", ""],
+                                         [player_up, "", "", "", "", "", event_name]]
                     player_ping = pd.DataFrame(ping_data, columns=headers)
                     super_output = total_output.append(player_ping, ignore_index=True)
                     super_output.to_clipboard(excel=True, index=False)
@@ -551,12 +561,21 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         player_up = "Done!"
                     headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
                     if len(tier_data) > 1:
-                        ping_data = [["-", "", "", "", "", "", ""],
-                                     [player_up, "is up", "", "", "", "",
-                                      "T{} at {}".format(tier_value[1:], event_name)]]
+                        if player_up != "Done!":
+                            ping_data = [["-", "", "", "", "", "", ""],
+                                         [player_up, "is up", "", "", "", "",
+                                          "T{} at {}".format(tier_value[1:], event_name)]]
+                        else:
+                            ping_data = [["-", "", "", "", "", "", ""],
+                                         [player_up, "", "", "", "", "",
+                                          "T{} at {}".format(tier_value[1:], event_name)]]
                     else:
-                        ping_data = [["-", "", "", "", "", "", ""],
+                        if player_up != "Done!":
+                            ping_data = [["-", "", "", "", "", "", ""],
                                      [player_up, "is up", "", "", "", "", event_name]]
+                        else:
+                            ping_data = [["-", "", "", "", "", "", ""],
+                                         [player_up, "", "", "", "", "", event_name]]
                     player_ping = pd.DataFrame(ping_data, columns=headers)
                     super_output = total_output.append(player_ping, ignore_index=True)
                     super_output.to_clipboard(excel=True, index=False)
