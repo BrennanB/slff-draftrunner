@@ -41,7 +41,9 @@ Run "Draft Runner.py" file. Any commands you run, will auto copy the latest vers
 
 ### Commands
 
-Shortforms for each command will be denoted by (). [] denote values for the inputs. If you have enabled tiers preface each command with t(tier number)
+Shortforms for each command will be denoted by (). [] denote values for the inputs. 
+
+If you have enabled tiers preface each command with t(tier number)
 
 #### pick (p) [team]
 
