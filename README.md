@@ -69,6 +69,10 @@ Outputs current draft status.
 
 Delays the draft from 1-59 minutes. To delay more, run command multiple times.
 
+#### remaining
+
+Posts the remaining teams available for a draft that went unpicked. Useful for setting up multi day drafts.
+
 #### exit/end/quit
 
 Closes the draft runner.
