@@ -15,6 +15,8 @@ In cmd type "pip install gspread"
 
 In cmd type "pip install gspread_dataframe"
 
+In cmd type "pip install oauth2client"
+
 Create a google sheets api key, or SLFF draft runners can recieve one from me.
 
 You are now able to run the draft runner.
