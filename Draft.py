@@ -1,6 +1,10 @@
 import os
 import pandas as pd
 import re
+import gspread
+import gspread_dataframe
+from oauth2client.service_account import ServiceAccountCredentials
+
 
 
 def available_teams(available_team_list, tier_ratio):
@@ -160,7 +164,9 @@ def determine_swap_player(swap_index, draft_output):
         except:
             print("Please check your player input.")
 
+
 def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output, number_of_players, base_path, random_teams):
+
     list_active = True
     while list_active:
         # Output Results
@@ -536,7 +542,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                             except:
                                 pass
             elif commands[0].lower() == "remaining":
-                print(available_team_list)
                 remaining_teams = ""
                 for team_data in available_team_list:
                     for i in range(0, team_data[1]):
@@ -577,14 +582,14 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         else:
                             ping_data = [["-", "", "", "", "", "", ""],
                                          [player_up, "", "", "", "", "",
-                                          "T{} at {}".format(tier_value[1:], event_name)]]
+                                          "T{} at {}".format(tier_value[1:], event_name.lower())]]
                     else:
                         if player_up != "Done!":
                             ping_data = [["-", "", "", "", "", "", ""],
-                                     [player_up, "is up", "", "", "", "", event_name]]
+                                     [player_up, "is up", "", "", "", "", event_name.lower()]]
                         else:
                             ping_data = [["-", "", "", "", "", "", ""],
-                                         [player_up, "", "", "", "", "", event_name]]
+                                         [player_up, "", "", "", "", "", event_name.lower()]]
                     player_ping = pd.DataFrame(ping_data, columns=headers)
                     super_output = total_output.append(player_ping, ignore_index=True)
                     super_output.to_clipboard(excel=True, index=False)
@@ -592,6 +597,30 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     if len(tier_data) > 1:
                         d.update({int(tier_value[1:]): draft_output})
                         tiered_available_team_list.update({int(tier_value[1:]): available_team_list})
+
+            # Logging onto spreadsheet
+
+
+            draft_log = draft_output.copy()
+            draft_log = draft_log.drop(columns=['--', 'Random List'])
+            keys = []
+            identifier = []
+            for i in range(0, draft_log.shape[0]):
+                keys.append(event_name.lower())
+                identifier.append("{}_{}".format(draft_log.at[i, 'Player'], event_name.lower()))
+            draft_log['Event'] = keys
+            draft_log.insert(0, "Identifier", identifier, True)
+
+            scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+            credentials = ServiceAccountCredentials.from_json_keyfile_name('SLFF Draft Runner-e9d03ff02c79.json', scope)
+            gc = gspread.authorize(credentials)
+            stuff = gc.open('SLFF 2019-2020 Main Spreadsheet')
+            wks = stuff.worksheet('Results')
+
+            old_logs = gspread_dataframe.get_as_dataframe(wks)
+            old_logs = old_logs[~old_logs.Event.str.contains(event_name.lower())]
+            old_logs = old_logs.append(draft_log, ignore_index=True)
+            gspread_dataframe.set_with_dataframe(wks, old_logs)
 
         else:
             print("Invalid Command, please enter more than just tier value")
