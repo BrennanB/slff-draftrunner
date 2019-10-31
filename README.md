@@ -11,6 +11,12 @@ On the github page select the green button "Clone or Download" and download as a
 
 Open your command line. For windows press Windows+R to open “Run” box. Type “cmd” and then click “OK” to open. In cmd type "pip install pandas" Leave it to run till successful messages appear.
 
+In cmd type "pip install gspread"
+
+In cmd type "pip install gspread_dataframe"
+
+Create a google sheets api key, or SLFF draft runners can recieve one from me.
+
 You are now able to run the draft runner.
 
 ## Editing Settings
