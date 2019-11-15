@@ -389,18 +389,26 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                     swap_index1 = swap_index(draft_output, number_of_players, commands[1])
                     swap_index2 = swap_index(draft_output, number_of_players, commands[2])
                     if swap_index1 is not None:  # Did it find team at commands 2?
-                        if swap_index2 is not None:
+                        print(available_team_list)
+                        raw_team_numbers = []
+                        for team in available_team_list:
+                            if team[1] != 0:
+                                raw_team_numbers.append(team[0])
+                        print(swap_index2 not in raw_team_numbers)
+                        print(raw_team_numbers)
+                        if swap_index2 is not None and commands[2] not in raw_team_numbers:
+
                             '''Both teams are picked'''
                             #TODO Add player team swap compatibility for multiple team drafts
 
                             if len(swap_index1) > 1:
-                                pass
+                                swap_index1 = determine_swap_player(swap_index1, draft_output)
                             else:
-                                pass
+                                swap_index1 = swap_index1[0]
                             if len(swap_index2) > 1:
-                                pass
+                                swap_index2 = determine_swap_player(swap_index2, draft_output)
                             else:
-                                pass
+                                swap_index2 = swap_index2[0]
 
                             if len(swap_index1) == 1 and len(swap_index2) == 1:
                                 draft_output.at[swap_index1[0][0], swap_index1[0][1]] = commands[2]
@@ -408,7 +416,12 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                 draft_output.at[swap_index2[0][0], swap_index2[0][1]] = commands[1]
                                 draft_output.at[swap_index2[0][0], "*Status*"] = "*Live Picking*"
                             else:
-                                print("This functionality isn't available right now. Please swap using a different method")
+                                print(swap_index1)
+                                print(swap_index2)
+                                draft_output.at[swap_index1[0], swap_index1[1]] = commands[2]
+                                draft_output.at[swap_index1[0], "*Status*"] = "*Live Picking*"
+                                draft_output.at[swap_index2[0], swap_index2[1]] = commands[1]
+                                draft_output.at[swap_index2[0], "*Status*"] = "*Live Picking*"
                                 super_failed = True
                         else:
                             if len(swap_index1) > 1:
