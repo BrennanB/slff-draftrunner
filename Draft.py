@@ -422,7 +422,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                                 draft_output.at[swap_index1[0], "*Status*"] = "*Live Picking*"
                                 draft_output.at[swap_index2[0], swap_index2[1]] = commands[1]
                                 draft_output.at[swap_index2[0], "*Status*"] = "*Live Picking*"
-                                super_failed = True
                         else:
                             if len(swap_index1) > 1:
                                 swap_index1 = determine_swap_player(swap_index1, draft_output)
