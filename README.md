@@ -45,7 +45,26 @@ Re-download the ZIP file from Github, and update your save directory.
 
 ## Running a draft
 
-Run "Draft Runner.py" file. Any commands you run, will auto copy the latest version of the draft to your clipboard. No need to copy the data. A preview will be shown of the draft and it's status, and all you need to do is verify the command ran, and then post the result into Chief Delphi
+Run "Draft Runner.py" file. 
+
+A .txt file will automatically open to ask for the player list (the people who are making picks). Paste your player list in the txt file, close and save.
+
+Another .txt file will open for your team list (actual FRC teams). Paste your team list, close and save.
+
+The draft runner will now generate a draft based on the settings you set in settings.py. If you enabled tiers, and tiers were required, you will need to use the "print" command to view each tier by using the tier prefix, and then print command.
+
+Any commands you run, will auto copy the latest version of the draft to your clipboard. No need to copy the data. A preview will be shown of the draft and it's status, and all you need to do is verify the command ran, and then post the result into Chief Delphi.
+
+To add a list, use the list command, the next available team will automatically be put into the team's pick slot when it is thier turn.
+Teams will also automatically be randomed if they had been randomed previously by the draft runner. All of this is done by the team's status in the draft runner output.
+
+To re-enable a list, use the list command for the specified team, and save and close the list.
+
+If a player is no longer mia, and would like to not be randomed for next round, swap in and out their randomed team to take them off of the auto random cycle (Better solution coming sometime)
+
+After each pick, the draft runner will update the current SLFF year sheet, and post the results that it has, as they get updated.
+
+If you need to do any modification to the team list/player list/random list, you will need to find the event files in your set save directory (defaults into the folder where draft runner.py is) and modify the .json and .txt files accordingly.
 
 ### Commands
 
