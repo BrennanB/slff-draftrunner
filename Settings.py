@@ -4,3 +4,4 @@ SAVE_DIR = None   # r"E:\_Python Projects\Draft Runner Data"
 OUTPUT_MODE = "CD"
 RANDOM_ORDER = False
 TIERS = False
+ROOKIE_THRESHOLD = 8000

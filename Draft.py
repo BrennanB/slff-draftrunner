@@ -61,14 +61,14 @@ def time_math(hour, minute, additions, margin):
 
 def setup_draft(start_hour, start_minute, players, ROUND_TIMING):
     number_of_teams = len(players)
-    r2_stats = time_math(start_hour, start_minute, number_of_teams - 1, ROUND_TIMING[0])
-    r3_stats = time_math(r2_stats[1], r2_stats[2], number_of_teams + 1, ROUND_TIMING[1])
+    r2_stats = time_math(start_hour, start_minute, number_of_teams - 1, round(ROUND_TIMING[0]))
+    r3_stats = time_math(r2_stats[1], r2_stats[2], number_of_teams + 1, round(ROUND_TIMING[1]))
     table = []
     i = 0
     for player in players:
-        team_setup = [player, time_math(start_hour, start_minute, i, ROUND_TIMING[0])[0],
-                      time_math(r2_stats[1], r2_stats[2], (number_of_teams - i), ROUND_TIMING[1])[0],
-                      time_math(r3_stats[1], r3_stats[2], i, ROUND_TIMING[2])[0], "*Live Picking*", "", ""]
+        team_setup = [player, time_math(start_hour, start_minute, i, round(ROUND_TIMING[0]))[0],
+                      time_math(r2_stats[1], r2_stats[2], (number_of_teams - i), round(ROUND_TIMING[1]))[0],
+                      time_math(r3_stats[1], r3_stats[2], i, round(ROUND_TIMING[2]))[0], "*Live Picking*", "", ""]
         table.append(team_setup)
         i += 1
     return table
@@ -244,11 +244,11 @@ def create_draft(players_clean, tier_data, START_TIME, ROUND_TIMING, base_path, 
             i += (tier + 1)
             if past_i != 0:
                 tiered_players_clean.append(players_clean[(past_i - (tier_index - 1)):(i - tier_index)])
-                draft_info = setup_draft(START_TIME[0], START_TIME[1],
+                draft_info = setup_draft(round(START_TIME[0]), round(START_TIME[1]),
                                          players_clean[(past_i - (tier_index - 1)):(i - tier_index)], ROUND_TIMING)
             else:
                 tiered_players_clean.append(players_clean[(past_i):(i - 1)])
-                draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean[(past_i):(i - 1)],
+                draft_info = setup_draft(round(START_TIME[0]), round(START_TIME[1]), players_clean[(past_i):(i - 1)],
                                          ROUND_TIMING)
             headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
             d[tier_index] = pd.DataFrame(draft_info, columns=headers)
@@ -281,7 +281,7 @@ def create_draft(players_clean, tier_data, START_TIME, ROUND_TIMING, base_path, 
         print("There are {} tiers, to post the tiers, please use the 'print' command".format(len(tier_data)))
         return {"tiered_available_team_list": tiered_available_team_list, "d": d, "tiered_players_clean": tiered_players_clean}
     else:  # Tiers aren't being run
-        draft_info = setup_draft(START_TIME[0], START_TIME[1], players_clean, ROUND_TIMING)
+        draft_info = setup_draft(round(START_TIME[0]), round(START_TIME[1]), players_clean, ROUND_TIMING)
         headers = ["Player", "Team 1", "Team 2", "Team 3", "*Status*", "--", "Random List"]
         draft_output = pd.DataFrame(draft_info, columns=headers)
         tiered_players_clean = None
@@ -540,20 +540,23 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
 
             elif commands[0].lower() == "delay":
                 # Delay draft by x minutes
-                if len(commands) != 2 or int(commands[1]) > 60:
-                    print("Please use the command with a delay in minutes, make sure you don't delay more than 60minutes.")
-                    super_failed = True
-                else:
-                    local_num_players = len(draft_output.index)
-                    for index in range(0, local_num_players):
-                        for column in ["Team 1", "Team 2", "Team 3"]:
-                            try:
-                                current_time = draft_output.at[index, column]
-                                current_time = [int(x) for x in current_time.split(":")]
-                                new_base_time = time_math(current_time[0], current_time[1], 1, int(commands[1]))
-                                draft_output.at[index, column] = new_base_time[0]
-                            except:
-                                pass
+                try:
+                    if len(commands) != 2 or int(commands[1]) > 60:
+                        print("Please use the command with a delay in minutes, make sure you don't delay more than 60minutes.")
+                        super_failed = True
+                    else:
+                        local_num_players = len(draft_output.index)
+                        for index in range(0, local_num_players):
+                            for column in ["Team 1", "Team 2", "Team 3"]:
+                                try:
+                                    current_time = draft_output.at[index, column]
+                                    current_time = [int(x) for x in current_time.split(":")]
+                                    new_base_time = time_math(current_time[0], current_time[1], 1, round(int(commands[1])))
+                                    draft_output.at[index, column] = new_base_time[0]
+                                except:
+                                    pass
+                except:
+                    pass
             elif commands[0].lower() == "remaining":
                 remaining_teams = ""
                 for team_data in available_team_list:
@@ -570,7 +573,6 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             if super_failed is False:
                 list_results = check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output,
                                                    number_of_players, base_path, random_teams)
-                print(list_results)
                 slot_index = list_results['slot_index']
                 available_team_list = list_results['available_team_list']
                 draft_output = list_results['draft_output']
