@@ -4,6 +4,7 @@ import re
 import gspread
 import gspread_dataframe
 from oauth2client.service_account import ServiceAccountCredentials
+import Settings
 
 
 
@@ -167,6 +168,8 @@ def determine_swap_player(swap_index, draft_output):
 
 def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output, number_of_players, base_path, random_teams):
 
+    # Runs available lists until no more lists can be run.
+
     list_active = True
     listed_team = []
     while list_active:
@@ -181,6 +184,7 @@ def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output
         slot_index = current_slot(total_output, number_of_players)
         if slot_index is not None:
             if draft_output.at[slot_index[0], "*Status*"] == "*List*":
+                # Player has a list
                 listed_team.append(draft_output.at[slot_index[0], "Player"])
                 player_list_location = "{}\{}.txt".format(base_path,
                                                           draft_output.at[slot_index[0], "Player"])
@@ -190,6 +194,18 @@ def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output
                 trying = True
                 found_team = False
                 for player_team in player_list_teams_clean:
+                    if player_team.lower() == "rookie":
+                        print("detected rookies")
+                        for available_team in available_team_list:
+                            try:
+                                if int(available_team[0]) >= Settings.ROOKIE_THRESHOLD and trying is True and available_team[1] != 0:
+                                    draft_output.at[slot_index[0], slot_index[1]] = available_team[0]
+                                    available_team_list.remove(available_team)
+                                    available_team_list.append([available_team[0], available_team[1] - 1])
+                                    trying = False
+                                    found_team = True
+                            except Exception as e:
+                                print(e)
                     for available_team in available_team_list:
                         if available_team[0] == player_team and trying is True and available_team[1] != 0:
                             draft_output.at[slot_index[0], slot_index[1]] = player_team
@@ -199,6 +215,7 @@ def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output
                             found_team = True
 
                 if found_team is False:
+                    # Player list ran out!
                     print("No valid picks on list, finding next random team.")
                     trying = True
                     for random_team in random_teams:
