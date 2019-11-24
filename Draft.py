@@ -515,6 +515,29 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                         print("Invalid player, ensure capitalization is the same.")
                         super_failed = True
 
+            elif commands[0].lower() == "status":
+                if len(commands) != 3:
+                    print("Incorrect formatting, please use \"list [player name] [status]\". Player names are caps sensitive.")
+                    super_failed = True
+                else:
+                    if commands[1] in players_clean:
+                        if commands[2].lower() == "list":
+                            player_list_location = "{}\{}.txt".format(base_path, commands[1])
+                            if os.path.isfile(player_list_location):
+                                draft_output.at[players_clean.index(commands[1]), "*Status*"] = "*List*"
+                            else:
+                                print("{} doesn't have a list for this event, please add one".format(commands[1]))
+                                super_failed = True
+                        elif commands[2].lower() == "live picking" or commands[2].lower() == "live":
+                            draft_output.at[players_clean.index(commands[1]), "*Status*"] = "*Live Picking*"
+                        elif commands[2].lower() == "missing":
+                            draft_output.at[players_clean.index(commands[1]), "*Status*"] = "*Missing*"
+                        elif commands[2].lower() == "mia":
+                            draft_output.at[players_clean.index(commands[1]), "*Status*"] = "*MIA*"
+
+                    else:
+                        print("Invalid player, ensure capitalization is the same.")
+                        super_failed = True
             elif commands[0].lower() == "exit" or commands[0].lower() == "end" or commands[0].lower() == "quit":
                 break
 
@@ -644,11 +667,12 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                 identifier.append("{}_{}".format(draft_log.at[i, 'Player'], event_name.lower()))
             draft_log['Event'] = keys
             draft_log.insert(0, "Identifier", identifier, True)
-            if listed_team:
-                print("========================")
-                for x in listed_team:
-                    print("Ran list for: {}!".format(x))
-                print("========================")
+            if not super_failed:
+                if listed_team:
+                    print("========================")
+                    for x in listed_team:
+                        print("Ran list for: {}!".format(x))
+                    print("========================")
             try:
                 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
                 credentials = ServiceAccountCredentials.from_json_keyfile_name('SLFF Draft Runner-e9d03ff02c79.json', scope)
