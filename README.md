@@ -43,7 +43,7 @@ Right click "Settings.py" and edit with IDLE or your preferred text editor. Edit
 
 ## Updating
 
-Re-download the ZIP file from Github, and update your save directory.
+Re-download the ZIP file from Github, extract and replace all the files into the previous folder where you saved the draft runner. Ensure that the google API key is still in the correct folder.
 
 ## Running a draft
 
