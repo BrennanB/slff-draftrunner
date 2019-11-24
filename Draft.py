@@ -168,6 +168,7 @@ def determine_swap_player(swap_index, draft_output):
 def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output, number_of_players, base_path, random_teams):
 
     list_active = True
+    listed_team = []
     while list_active:
         # Output Results
         if len(tier_data) == 1:
@@ -180,7 +181,7 @@ def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output
         slot_index = current_slot(total_output, number_of_players)
         if slot_index is not None:
             if draft_output.at[slot_index[0], "*Status*"] == "*List*":
-                print("Yo they got a list for {}!".format(draft_output.at[slot_index[0], "Player"]))
+                listed_team.append(draft_output.at[slot_index[0], "Player"])
                 player_list_location = "{}\{}.txt".format(base_path,
                                                           draft_output.at[slot_index[0], "Player"])
                 f = open(player_list_location, "r")
@@ -223,7 +224,7 @@ def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output
                 list_active = False
         else:
             list_active = False
-    return {"slot_index": slot_index, "available_team_list": available_team_list, "draft_output": draft_output}
+    return {"slot_index": slot_index, "available_team_list": available_team_list, "draft_output": draft_output, "listed_team": listed_team}
 
 
 def create_draft(players_clean, tier_data, START_TIME, ROUND_TIMING, base_path, available_team_list, tier_ratio,
@@ -569,9 +570,11 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             if super_failed is False:
                 list_results = check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output,
                                                    number_of_players, base_path, random_teams)
+                print(list_results)
                 slot_index = list_results['slot_index']
                 available_team_list = list_results['available_team_list']
                 draft_output = list_results['draft_output']
+                listed_team = list_results['listed_team']
                 if OUTPUT_MODE == "CD" and printed is False:
                     if len(tier_data) == 1:
                         teams_output = available_teams(available_team_list, tier_ratio)
@@ -622,7 +625,11 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
                 identifier.append("{}_{}".format(draft_log.at[i, 'Player'], event_name.lower()))
             draft_log['Event'] = keys
             draft_log.insert(0, "Identifier", identifier, True)
-
+            if listed_team:
+                print("========================")
+                for x in listed_team:
+                    print("Ran list for: {}!".format(x))
+                print("========================")
             try:
                 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
                 credentials = ServiceAccountCredentials.from_json_keyfile_name('SLFF Draft Runner-e9d03ff02c79.json', scope)
