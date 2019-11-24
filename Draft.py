@@ -194,7 +194,7 @@ def check_and_run_lists(tier_data, tier_ratio, available_team_list, draft_output
                 trying = True
                 found_team = False
                 for player_team in player_list_teams_clean:
-                    if player_team.lower() == "rookie":
+                    if player_team.lower() == "rookie" or player_team.lower() == "rookies":
                         print("detected rookies")
                         for available_team in available_team_list:
                             try:
