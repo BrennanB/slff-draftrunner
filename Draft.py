@@ -623,16 +623,20 @@ def run_draft(START_TIME, tier_data, base_path, tier_ratio, ROUND_TIMING, RANDOM
             draft_log['Event'] = keys
             draft_log.insert(0, "Identifier", identifier, True)
 
-            scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-            credentials = ServiceAccountCredentials.from_json_keyfile_name('SLFF Draft Runner-e9d03ff02c79.json', scope)
-            gc = gspread.authorize(credentials)
-            stuff = gc.open('SLFF 2019-2020 Main Spreadsheet')
-            wks = stuff.worksheet('Results')
+            try:
+                scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+                credentials = ServiceAccountCredentials.from_json_keyfile_name('SLFF Draft Runner-e9d03ff02c79.json', scope)
+                gc = gspread.authorize(credentials)
+                stuff = gc.open('SLFF 2019-2020 Main Spreadsheet')
+                wks = stuff.worksheet('Results')
 
-            old_logs = gspread_dataframe.get_as_dataframe(wks)
-            old_logs = old_logs[~old_logs.Event.str.contains(event_name.lower())]
-            old_logs = old_logs.append(draft_log, ignore_index=True)
-            gspread_dataframe.set_with_dataframe(wks, old_logs)
+                old_logs = gspread_dataframe.get_as_dataframe(wks)
+                old_logs = old_logs[~old_logs.Event.str.contains(event_name.lower())]
+                old_logs = old_logs.append(draft_log, ignore_index=True)
+                gspread_dataframe.set_with_dataframe(wks, old_logs)
+            except Exception as e:
+                print("Failed to upload to google sheets. You may have an incorrectly set up API key, or no internet access currently")
+                print(e)
 
         else:
             print("Invalid Command, please enter more than just tier value")
