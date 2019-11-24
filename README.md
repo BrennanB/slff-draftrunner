@@ -109,8 +109,11 @@ Changes a player's status in the status column:
 Use the following commands for changing
 
 mia = *MIA*
+
 live = *Live Picking*
+
 missing = *Missing*
+
 list = *list*
 
 #### remaining
