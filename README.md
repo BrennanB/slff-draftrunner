@@ -39,6 +39,8 @@ Right click "Settings.py" and edit with IDLE or your preferred text editor. Edit
 
 **TIERS** - TRUE = If number of picks exceed number of pickable teams tiers will be created, FALSE = If number of picks exceed number of pickable teams duplicates of teams will be created.
 
+**ROOKIE_CUTOFF** - Insert the lowest number rookie of the year here.
+
 ## Updating
 
 Re-download the ZIP file from Github, and update your save directory.
@@ -65,6 +67,10 @@ If a player is no longer mia, and would like to not be randomed for next round, 
 After each pick, the draft runner will update the current SLFF year sheet, and post the results that it has, as they get updated.
 
 If you need to do any modification to the team list/player list/random list, you will need to find the event files in your set save directory (defaults into the folder where draft runner.py is) and modify the .json and .txt files accordingly.
+
+Since all the lists and mia randoming are done automatically based on the "Status" column, you may find some times where you wish to change a players status manually. One use case is a quicker method of re-enabling a list. To do so, use the status command.
+
+Inserting "rookie" or "rookies" in a list, will automatically give you the highest rookie number on the random list.
 
 ### Commands
 
@@ -95,6 +101,17 @@ Outputs current draft status.
 #### delay [time delay minutes 1-59]
 
 Delays the draft from 1-59 minutes. To delay more, run command multiple times.
+
+#### status [player name] [status to change to]
+
+Changes a player's status in the status column:
+
+Use the following commands for changing
+
+mia = *MIA*
+live = *Live Picking*
+missing = *Missing*
+list = *list*
 
 #### remaining
 
